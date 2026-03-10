@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Padel Champagne League · Frankfurt</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-pale: #F5E9C4;
+  --gold-dark: #7A5F1A;
+  --black: #080808;
+  --dark: #101010;
+  --card: #161616;
+  --border: rgba(201,168,76,0.25);
+  --text: #EDE6D6;
+  --muted: #7A7060;
+  --green: #4CAF7A;
+  --white: #F9F4EA;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--black); color: var(--text); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; position: relative;
+  padding: 60px 24px; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 10%, rgba(201,168,76,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(201,168,76,0.06) 0%, transparent 60%);
+}
+.court-lines { position: absolute; inset: 0; opacity: 0.04; pointer-events: none; }
+.court-lines svg { width: 100%; height: 100%; }
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 18px; border: 1px solid var(--border); border-radius: 100px;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold); font-weight: 500; margin-bottom: 32px;
+  animation: fadeUp 0.6s ease both;
+}
+.hero-badge::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(72px, 14vw, 160px);
+  line-height: 0.9; letter-spacing: 4px; color: var(--white);
+  animation: fadeUp 0.6s 0.1s ease both; opacity: 0;
+}
+.hero h1 em { font-style: normal; color: var(--gold); display: block; }
+.hero-sub {
+  font-family: 'Lora', serif; font-style: italic;
+  font-size: clamp(16px, 2.5vw, 22px); color: var(--muted);
+  margin-top: 20px; max-width: 520px; line-height: 1.6;
+  animation: fadeUp 0.6s 0.2s ease both; opacity: 0;
+}
+.hero-cta {
+  margin-top: 48px; display: flex; gap: 16px;
+  flex-wrap: wrap; justify-content: center;
+  animation: fadeUp 0.6s 0.3s ease both; opacity: 0;
+}
+.btn-primary {
+  padding: 16px 40px; background: var(--gold); color: var(--black);
+  font-size: 13px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; border: none; border-radius: 4px;
+  cursor: pointer; text-decoration: none;
+  transition: background 0.2s, transform 0.2s; display: inline-block;
+}
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+.btn-ghost {
+  padding: 16px 40px; background: transparent; color: var(--text);
+  font-size: 13px; font-weight: 500; letter-spacing: 2px;
+  text-transform: uppercase; border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px; cursor: pointer; text-decoration: none;
+  transition: border-color 0.2s, color 0.2s; display: inline-block;
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.hero-stats {
+  margin-top: 72px; display: flex; gap: 48px;
+  justify-content: center; flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.4s ease both; opacity: 0;
+}
+.stat { text-align: center; }
+.stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 44px; color: var(--gold); line-height: 1; }
+.stat-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.scroll-hint {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--muted); font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  animation: fadeUp 0.6s 0.8s ease both; opacity: 0;
+}
+.scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollDown 1.5s infinite;
+}
+@keyframes scrollDown {
+  0% { transform: scaleY(0); transform-origin: top; }
+  50% { transform: scaleY(1); transform-origin: top; }
+  51% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+section { padding: 100px 24px; max-width: 1000px; margin: 0 auto; }
+.section-label {
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); font-weight: 500; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-label::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(40px, 7vw, 72px);
+  letter-spacing: 2px; line-height: 1; color: var(--white); margin-bottom: 48px;
+}
+.section-title span { color: var(--gold); }
+
+.what-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 640px) { .what-grid { grid-template-columns: 1fr; } }
+.what-card {
+  padding: 32px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--card); position: relative; overflow: hidden;
+  transition: border-color 0.3s;
+}
+.what-card:hover { border-color: rgba(201,168,76,0.5); }
+.what-card::before { content: ''; position: absolute; top: 0; left: 0; width: 40px; height: 2px; background: var(--gold); }
+.what-icon { font-size: 32px; margin-bottom: 16px; }
+.what-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--white); }
+.what-text { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+.game-steps { display: flex; flex-direction: column; position: relative; }
+.game-steps::before {
+  content: ''; position: absolute; left: 28px; top: 40px; bottom: 40px;
+  width: 1px; background: linear-gradient(to bottom, var(--gold), transparent);
+}
+.game-step {
+  display: flex; gap: 28px; align-items: flex-start;
+  padding: 28px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.game-step:last-child { border-bottom: none; }
+.step-num {
+  width: 56px; height: 56px; border-radius: 50%;
+  border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--gold);
+  flex-shrink: 0; background: var(--black); position: relative; z-index: 1;
+}
+.step-title { font-size: 16px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+.step-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.score-example { display: inline-flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.score-pill {
+  padding: 4px 14px; border-radius: 100px; font-size: 12px; font-weight: 600;
+  background: rgba(201,168,76,0.1); border: 1px solid var(--border); color: var(--gold-light);
+}
+.score-pill.win { background: rgba(76,175,122,0.1); border-color: rgba(76,175,122,0.3); color: #7AE0A0; }
+
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 640px) { .compare { grid-template-columns: 1fr; } }
+.compare-box { padding: 28px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); }
+.compare-box.old { background: rgba(207,80,80,0.04); border-color: rgba(207,80,80,0.15); }
+.compare-box.new { background: rgba(76,175,122,0.04); border-color: rgba(76,175,122,0.2); }
+.compare-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; margin-bottom: 16px; }
+.compare-box.old .compare-label { color: #CF5050; }
+.compare-box.new .compare-label { color: var(--green); }
+.compare-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; margin-bottom: 16px; }
+.compare-box.old .compare-title { color: #E07070; }
+.compare-box.new .compare-title { color: #7AE0A0; }
+.compare-items { display: flex; flex-direction: column; gap: 10px; }
+.compare-item { display: flex; gap: 10px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+.compare-item::before { content: '·'; flex-shrink: 0; }
+
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 760px) { .pricing-grid { grid-template-columns: 1fr; } }
+.price-card {
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 32px 24px; background: var(--card); text-align: center;
+  position: relative; transition: transform 0.2s;
+}
+.price-card:hover { transform: translateY(-4px); }
+.price-card.featured {
+  border-color: var(--gold);
+  background: linear-gradient(160deg, #1A1500, var(--card));
+}
+.price-card.featured::before {
+  content: '★ BASE PRICE';
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--gold); color: var(--black);
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  padding: 3px 12px; border-radius: 100px; white-space: nowrap;
+}
+.price-who { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; font-weight: 500; }
+.price-amount { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: var(--gold-light); line-height: 1; }
+.price-currency { font-family: 'Bebas Neue', sans-serif; font-size: 32px; vertical-align: top; margin-top: 10px; display: inline-block; color: var(--gold-dark); }
+.price-period { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.price-original { font-size: 13px; color: var(--muted); text-decoration: line-through; margin-top: 8px; }
+.price-saving {
+  display: inline-block; padding: 3px 10px;
+  background: rgba(76,175,122,0.12); border: 1px solid rgba(76,175,122,0.25);
+  color: var(--green); font-size: 11px; font-weight: 600; border-radius: 100px; margin-top: 8px;
+}
+.price-divider { width: 40px; height: 1px; background: var(--border); margin: 20px auto; }
+.price-includes { display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.price-item { display: flex; gap: 10px; font-size: 12px; color: var(--muted); align-items: flex-start; }
+.price-item::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+.referral-box {
+  margin-top: 32px; padding: 28px 32px;
+  border: 1px dashed rgba(201,168,76,0.4); border-radius: 8px;
+  background: rgba(201,168,76,0.03);
+  display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+}
+.referral-icon { font-size: 36px; flex-shrink: 0; }
+.referral-text h3 { font-size: 16px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+.referral-text p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.referral-amount { margin-left: auto; text-align: center; flex-shrink: 0; }
+.referral-num { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--gold); line-height: 1; }
+.referral-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+
+.groups-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+@media (max-width: 640px) { .groups-grid { grid-template-columns: 1fr; } }
+.group-card {
+  padding: 28px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);
+  background: var(--card); transition: border-color 0.2s;
+}
+.group-card:hover { border-color: var(--border); }
+.group-emoji { font-size: 28px; margin-bottom: 12px; }
+.group-name { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; color: var(--white); margin-bottom: 6px; }
+.group-level { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; font-weight: 500; }
+.group-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+.values-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 640px) { .values-row { grid-template-columns: repeat(2, 1fr); } }
+.value-item { padding: 24px; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; background: var(--card); text-align: center; }
+.value-emoji { font-size: 28px; margin-bottom: 12px; }
+.value-name { font-size: 13px; font-weight: 600; color: var(--white); }
+.value-desc { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+
+.divider { max-width: 1000px; margin: 0 auto; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
+
+.cta-section { text-align: center; padding: 120px 24px; max-width: 700px; margin: 0 auto; }
+.cta-section::before { content: '🥂'; font-size: 64px; display: block; margin-bottom: 24px; }
+.cta-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 8vw, 88px); letter-spacing: 3px; line-height: 1; color: var(--white); margin-bottom: 20px; }
+.cta-title span { color: var(--gold); }
+.cta-sub { font-family: 'Lora', serif; font-style: italic; font-size: 18px; color: var(--muted); margin-bottom: 40px; line-height: 1.6; }
+
+footer { text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); letter-spacing: 1px; }
+footer strong { color: var(--gold); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 16px 40px; display: flex; align-items: center;
+  justify-content: space-between; transition: background 0.3s;
+}
+nav.scrolled { background: rgba(8,8,8,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+.nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; color: var(--gold); text-decoration: none; }
+.nav-cta {
+  padding: 8px 20px; background: var(--gold); color: var(--black);
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; border-radius: 4px; text-decoration: none; transition: background 0.2s;
+}
+.nav-cta:hover { background: var(--gold-light); }
+
+.partido-note {
+  margin-top: 32px; padding: 20px 24px;
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px; font-size: 13px; color: var(--muted); line-height: 1.7;
+}
+.partido-note strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a class="nav-logo" href="#">🥂 PADEL CHAMPAGNE</a>
+  <a class="nav-cta" href="#registration">Join the league</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="court-lines">
+    <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none" stroke="white" stroke-width="1">
+      <rect x="200" y="100" width="800" height="600"/>
+      <line x1="600" y1="100" x2="600" y2="700"/>
+      <rect x="350" y="100" width="500" height="200"/>
+      <rect x="350" y="500" width="500" height="200"/>
+      <line x1="200" y1="400" x2="1000" y2="400"/>
+    </svg>
+  </div>
+
+  <div class="hero-badge">Frankfurt · Season 2 · April 13 – June 21</div>
+  <h1>PADEL<em>CHAMPAGNE</em></h1>
+  <p class="hero-sub">The most serious amateur padel league in Frankfurt. Play, compete and grow with the best community in the Rhein-Main region.</p>
+
+  <div style="margin-top:24px;padding:16px 28px;border:1px solid var(--border);border-radius:8px;background:rgba(201,168,76,0.05);animation:fadeUp 0.6s 0.25s ease both;opacity:0;max-width:480px;">
+    <div style="font-size:12px;color:var(--gold-light);font-weight:600;letter-spacing:1px;margin-bottom:6px">📅 SEASON 2 · 2026</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.7">
+      <strong style="color:var(--text)">April 13 – June 21</strong> · 10 weeks<br>
+      <strong style="color:var(--text)">5 groups</strong> · New group coming — name TBC
+    </div>
+  </div>
+
+  <div class="hero-cta">
+    <a href="#registration" class="btn-primary">Join now →</a>
+    <a href="#how-it-works" class="btn-ghost">How it works</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">120</div>
+      <div class="stat-label">Active players</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Groups by level</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Seasons per year</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">FRA</div>
+      <div class="stat-label">Frankfurt region</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<!-- WHAT IS IT -->
+<div class="divider"></div>
+<section id="what-is-it">
+  <div class="section-label reveal">What is Padel Champagne</div>
+  <h2 class="section-title reveal">Much more than<br><span>a league.</span></h2>
+
+  <div class="what-grid">
+    <div class="what-card reveal">
+      <div class="what-icon">🏆</div>
+      <div class="what-title">Organised by skill level</div>
+      <div class="what-text">4 groups matched to your level. Champagne, Helles, Weizen and Whisky. You play against people at your real level — not whoever happens to show up.</div>
+    </div>
+    <div class="what-card reveal">
+      <div class="what-icon">📍</div>
+      <div class="what-title">Multiple clubs in Frankfurt</div>
+      <div class="what-text">Matches are played at different indoor clubs across the Frankfurt region. No fixed venue — we adapt. Just show up and play.</div>
+    </div>
+    <div class="what-card reveal">
+      <div class="what-icon">🤝</div>
+      <div class="what-title">Private community</div>
+      <div class="what-text">When you sign up, you join our private player community. WhatsApp groups, live rankings, special events and much more.</div>
+    </div>
+    <div class="what-card reveal">
+      <div class="what-icon">🎉</div>
+      <div class="what-title">Events beyond the league</div>
+      <div class="what-text">Smashburger Day, Oktoberfest Padel, Halloween Night, Awards Gala… We run community events throughout the whole year.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="section-label reveal">Game format</div>
+  <h2 class="section-title reveal">The fairest<br><span>format.</span></h2>
+
+  <div class="compare reveal">
+    <div class="compare-box old">
+      <div class="compare-label">❌ Old system</div>
+      <div class="compare-title">Classic match</div>
+      <div class="compare-items">
+        <div class="compare-item">1st and 4th in the table played against 2nd and 3rd</div>
+        <div class="compare-item">If your partner had a bad day, you lost too</div>
+        <div class="compare-item">Constant complaints about partners</div>
+        <div class="compare-item">Result depended too much on who you were paired with</div>
+      </div>
+    </div>
+    <div class="compare-box new">
+      <div class="compare-label">✅ New system</div>
+      <div class="compare-title">Everyone vs everyone</div>
+      <div class="compare-items">
+        <div class="compare-item">Everyone plays with and against everyone in the group</div>
+        <div class="compare-item">Points are individual, not by pair</div>
+        <div class="compare-item">Each set won = 1 point. Max 3, min 0</div>
+        <div class="compare-item">The ranking reflects your real level — no excuses</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 48px;">
+    <div class="game-steps">
+
+      <div class="game-step reveal">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <div class="step-title">You sign up solo — no partner needed</div>
+          <div class="step-desc">Registration is <strong>individual</strong>. You don't need to come with a partner. The system organises the groups and you play with and against everyone in your group.</div>
+        </div>
+      </div>
+
+      <div class="game-step reveal">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <div class="step-title">Blind draws — you find out 48h before</div>
+          <div class="step-desc">Your opponents are revealed <strong>only 2 days before the match</strong>. Until then, you don't know who you're playing. No favouritism, no special prep. Everyone on equal terms.</div>
+        </div>
+      </div>
+
+      <div class="game-step reveal">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <div class="step-title">2 vs 2 format — 90 minutes on court</div>
+          <div class="step-desc">4 players, 90 minutes, everyone plays with and against everyone. Sets start at <strong>2-2</strong> (not 0-0) so there's time to play all rotations. First to reach 6 wins the set. If it reaches 6-6, a <strong>normal tie-break</strong> decides it.</div>
+        </div>
+      </div>
+
+      <div class="game-step reveal">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <div class="step-title">Set won → 1 point. Then pairs switch.</div>
+          <div class="step-desc">The winning pair each earn <strong>1 individual point</strong>. Then pairs rotate — your previous opponents become your partners. A new set starts again from <strong>2-2</strong>.</div>
+          <div class="score-example">
+            <span class="score-pill win">Pair A wins · +1 point each</span>
+            <span class="score-pill">Pair B loses · 0 points</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-step reveal">
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <div class="step-title">As many sets as time allows — max 3 points</div>
+          <div class="step-desc">You keep rotating and playing until the 90 minutes are up. Each player ends the session with between <strong>0 and 3 points</strong> depending on how many sets they won. Your ranking is yours alone — no partner excuses.</div>
+          <div class="score-example">
+            <span class="score-pill win">3 pts · Perfect session</span>
+            <span class="score-pill win">2 pts · Good session</span>
+            <span class="score-pill">1 pt · Average</span>
+            <span class="score-pill">0 pts · Tough day</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="partido-note reveal">
+      <strong>What about the court fee?</strong> Court costs are <strong>not included</strong> in the season fee. Each player pays their share of the court on match day, depending on the club. The registration fee covers your spot in the league, your individual ranking and access to the private community.
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- GROUPS -->
+<section id="groups">
+  <div class="section-label reveal">The groups</div>
+  <h2 class="section-title reveal">Find your<br><span>level.</span></h2>
+
+  <div style="margin-bottom:20px;padding:14px 20px;border:1px solid rgba(201,168,76,0.3);border-radius:6px;background:rgba(201,168,76,0.04);font-size:13px;color:var(--muted)" class="reveal">
+    🆕 <strong style="color:var(--gold-light)">Season 2 introduces a 5th group.</strong> Name coming soon — new spots available.
+  </div>
+
+  <div class="groups-grid">
+    <div class="group-card reveal">
+      <div class="group-emoji">🥃</div>
+      <div class="group-name">WHISKY</div>
+      <div class="group-level">Elite level</div>
+      <div class="group-desc">The most competitive group in the league. Top players, tight rankings and the highest level of play.</div>
+    </div>
+    <div class="group-card reveal">
+      <div class="group-emoji">🥂</div>
+      <div class="group-name">CHAMPAGNE</div>
+      <div class="group-level">Advanced level</div>
+      <div class="group-desc">Players with real experience and solid technique. Highly competitive and hungry to move up.</div>
+    </div>
+    <div class="group-card reveal" style="border-color:rgba(201,168,76,0.3);background:linear-gradient(135deg,rgba(201,168,76,0.05),var(--card))">
+      <div class="group-emoji">🆕</div>
+      <div class="group-name" style="color:var(--gold)">NEW GROUP</div>
+      <div class="group-level" style="color:var(--muted)">Name to be announced</div>
+      <div class="group-desc">A new group joining the league in Season 2. New spots, new players, same competitive spirit. Stay tuned.</div>
+    </div>
+    <div class="group-card reveal">
+      <div class="group-emoji">🍺</div>
+      <div class="group-name">HELLES</div>
+      <div class="group-level">Intermediate level</div>
+      <div class="group-desc">For players who have been on court for a while and want to improve through real competition in a healthy environment.</div>
+    </div>
+    <div class="group-card reveal">
+      <div class="group-emoji">🌾</div>
+      <div class="group-name">WEIZEN</div>
+      <div class="group-level">Entry level</div>
+      <div class="group-desc">The perfect group if you're new to the league. Relaxed atmosphere, learning and a lot of enthusiasm.</div>
+    </div>
+<section id="registration">
+  <div class="section-label reveal">Registration</div>
+  <h2 class="section-title reveal">Price per<br><span>season.</span></h2>
+
+  <div class="pricing-grid">
+
+    <div class="price-card reveal">
+      <div class="price-who">New player</div>
+      <div>
+        <span class="price-currency">€</span><span class="price-amount">60</span>
+      </div>
+      <div class="price-period">per season</div>
+      <div class="price-divider"></div>
+      <div class="price-includes">
+        <div class="price-item">Guaranteed spot in the league</div>
+        <div class="price-item">Updated individual ranking</div>
+        <div class="price-item">Access to the private community</div>
+        <div class="price-item">Participation in events</div>
+      </div>
+    </div>
+
+    <div class="price-card featured reveal">
+      <div class="price-who">Returning player · 1 season</div>
+      <div>
+        <span class="price-currency">€</span><span class="price-amount">50</span>
+      </div>
+      <div class="price-period">per season</div>
+      <div class="price-original">Regular price: €60</div>
+      <div class="price-saving">Save €10</div>
+      <div class="price-divider"></div>
+      <div class="price-includes">
+        <div class="price-item">Everything in the base price</div>
+        <div class="price-item">Loyalty discount</div>
+      </div>
+    </div>
+
+    <div class="price-card reveal">
+      <div class="price-who">Returning player · 2+ seasons</div>
+      <div>
+        <span class="price-currency">€</span><span class="price-amount">45</span>
+      </div>
+      <div class="price-period">per season</div>
+      <div class="price-original">Regular price: €60</div>
+      <div class="price-saving">Save €15</div>
+      <div class="price-divider"></div>
+      <div class="price-includes">
+        <div class="price-item">Everything in the base price</div>
+        <div class="price-item">Maximum loyalty discount</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="referral-box reveal">
+    <div class="referral-icon">🎯</div>
+    <div class="referral-text">
+      <h3>Bring a friend?</h3>
+      <p>If you invite someone new who signs up, you get <strong style="color:var(--gold-light)">€10 off</strong> your season fee. Your friend joins the best league in Frankfurt. Win-win.</p>
+    </div>
+    <div class="referral-amount">
+      <div class="referral-num">-10€</div>
+      <div class="referral-label">Per referral</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VALUES -->
+<section>
+  <div class="section-label reveal">Our culture</div>
+  <h2 class="section-title reveal">What we<br><span>believe in.</span></h2>
+
+  <div class="values-row">
+    <div class="value-item reveal">
+      <div class="value-emoji">🥂</div>
+      <div class="value-name">Good vibes</div>
+      <div class="value-desc">People first, results second</div>
+    </div>
+    <div class="value-item reveal">
+      <div class="value-emoji">🏆</div>
+      <div class="value-name">Healthy competition</div>
+      <div class="value-desc">Winning matters. Losing teaches</div>
+    </div>
+    <div class="value-item reveal">
+      <div class="value-emoji">📈</div>
+      <div class="value-name">Growth</div>
+      <div class="value-desc">Every season you become a better player</div>
+    </div>
+    <div class="value-item reveal">
+      <div class="value-emoji">🤝</div>
+      <div class="value-name">Respect</div>
+      <div class="value-desc">On and off the court</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CTA FINAL -->
+<div class="cta-section">
+  <div class="section-label reveal" style="justify-content:center">Ready?</div>
+  <h2 class="cta-title reveal">JOIN THE<br><span>LEAGUE.</span></h2>
+  <p class="cta-sub reveal">Spots are limited. <strong style="color:var(--gold-light)">Season 2 starts April 13th.</strong> Sign up now and secure your place.</p>
+  <div class="reveal">
+    <a href="https://wa.me/message/XXXXXXXXX" class="btn-primary" style="font-size:14px;padding:18px 48px">
+      Sign me up →
+    </a>
+  </div>
+  <p style="margin-top:20px;font-size:12px;color:var(--muted)" class="reveal">Message us on WhatsApp · Frankfurt</p>
+  <p style="margin-top:10px;font-size:13px;color:var(--gold)" class="reveal">📅 The league kicks off on <strong>April 13th</strong>. Spots close before then.</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>🥂 Padel Champagne League</strong> · Frankfurt · Organised by Nacho Braimas<br>
+  <span style="margin-top:6px;display:inline-block;font-size:10px;letter-spacing:2px">VAMOOOOS</span>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+  });
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
