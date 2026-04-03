@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events — Padel Champagne</title>
+  <meta name="description" content="Upcoming and past events from the Padel Champagne league in Frankfurt.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Lora:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-logo">
+        <img src="assets/logo.png" alt="Padel Champagne" class="navbar-logo-img">
+        <span>PADEL CHAMPAGNE</span>
+      </a>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="navbar-menu" id="navbarMenu">
+        <li><a href="index.html" class="navbar-link">Home</a></li>
+        <li><a href="league.html" class="navbar-link">League</a></li>
+        <li><a href="standings.html" class="navbar-link">Standings</a></li>
+        <li><a href="events.html" class="navbar-link active">Events</a></li>
+      </ul>
+    </div>
+  </nav>
+  <!-- ========== PAGE TABS ========== -->
+  <div class="page-tabs">
+    <a href="index.html" class="page-tab">Home</a>
+    <a href="league.html" class="page-tab">League</a>
+    <a href="standings.html" class="page-tab">Standings</a>
+    <a href="events.html" class="page-tab active">Events</a>
+  </div>
+
+  <!-- ========== PAGE HERO ========== -->
+  <section class="page-hero">
+    <div class="container">
+      <h1 class="page-hero-title">EVENTS</h1>
+      <p class="page-hero-subtitle">What's happening in the Padel Champagne community</p>
+    </div>
+  </section>
+
+  <!-- ========== UPCOMING EVENTS ========== -->
+  <section class="section" id="upcoming">
+    <div class="container">
+      <h2 class="section-title fade-in">Upcoming events</h2>
+      <p class="section-subtitle fade-in">Mark your calendar. Don't miss out.</p>
+      <div class="events-upcoming-grid">
+
+        <div class="event-upcoming-card fade-in">
+          <div class="event-date-block">
+            <span class="event-date-month">APR</span>
+            <span class="event-date-day">13</span>
+          </div>
+          <div class="event-info">
+            <h3>Season 2 Kick-off</h3>
+            <p class="event-location">&#128205; All venues &middot; Afternoon</p>
+            <p>The first match day of Season 2. 150+ players across 5 groups. Let's go.</p>
+          </div>
+          <span class="event-badge event-badge--upcoming">Upcoming</span>
+        </div>
+
+        <div class="event-upcoming-card fade-in">
+          <div class="event-date-block">
+            <span class="event-date-month">JUN</span>
+            <span class="event-date-day">21</span>
+          </div>
+          <div class="event-info">
+            <h3>Season 2 Finals &amp; Awards Night</h3>
+            <p class="event-location">&#128205; TBC &middot; Evening</p>
+            <p>The last match day of Season 2 followed by the awards ceremony. Champions crowned.</p>
+          </div>
+          <span class="event-badge event-badge--upcoming">Upcoming</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PAST EVENTS ========== -->
+  <section class="section past-events-section" id="past">
+    <div class="container">
+      <h2 class="section-title fade-in">Past events</h2>
+      <p class="section-subtitle fade-in">The memories we've made together.</p>
+      <div class="gallery-grid">
+
+        <div class="gallery-card fade-in">
+          <div class="gallery-placeholder">
+            <span>&#127870;</span>
+          </div>
+          <div class="gallery-info">
+            <h3>Season 1 Finals</h3>
+            <p>January 2026 &middot; Awards, celebrations and way too much champagne.</p>
+          </div>
+        </div>
+
+        <div class="gallery-card fade-in">
+          <div class="gallery-placeholder">
+            <span>&#127941;</span>
+          </div>
+          <div class="gallery-info">
+            <h3>Season 1 Launch</h3>
+            <p>October 2025 &middot; Where it all began. The first ever Padel Champagne match day.</p>
+          </div>
+        </div>
+
+        <div class="gallery-card fade-in">
+          <div class="gallery-placeholder">
+            <span>&#127939;</span>
+          </div>
+          <div class="gallery-info">
+            <h3>Summer Tournament</h3>
+            <p>August 2025 &middot; Special edition tournament before the league started.</p>
+          </div>
+        </div>
+
+        <div class="gallery-card fade-in">
+          <div class="gallery-placeholder">
+            <span>&#129346;</span>
+          </div>
+          <div class="gallery-info">
+            <h3>Season 1 Mid-season party</h3>
+            <p>November 2025 &middot; Good food, good people, good vibes.</p>
+          </div>
+        </div>
+
+      </div>
+      <p class="gallery-note fade-in">&#128247; Photos coming soon &mdash; add your images to the gallery by contacting Nacho</p>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <img src="assets/logo.png" alt="Padel Champagne" class="footer-logo">
+        <p>Padel Champagne League</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

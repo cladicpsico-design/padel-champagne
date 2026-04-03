@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standings — Padel Champagne</title>
+  <meta name="description" content="Live standings and classification for all groups in the Padel Champagne league.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Lora:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-logo">
+        <img src="assets/logo.png" alt="Padel Champagne" class="navbar-logo-img">
+        <span>PADEL CHAMPAGNE</span>
+      </a>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="navbar-menu" id="navbarMenu">
+        <li><a href="index.html" class="navbar-link">Home</a></li>
+        <li><a href="league.html" class="navbar-link">League</a></li>
+        <li><a href="standings.html" class="navbar-link active">Standings</a></li>
+        <li><a href="events.html" class="navbar-link">Events</a></li>
+      </ul>
+    </div>
+  </nav>
+  <!-- ========== PAGE TABS ========== -->
+  <div class="page-tabs">
+    <a href="index.html" class="page-tab">Home</a>
+    <a href="league.html" class="page-tab">League</a>
+    <a href="standings.html" class="page-tab active">Standings</a>
+    <a href="events.html" class="page-tab">Events</a>
+  </div>
+
+  <!-- ========== PAGE HERO ========== -->
+  <section class="page-hero">
+    <div class="container">
+      <h1 class="page-hero-title">STANDINGS</h1>
+      <p class="page-hero-subtitle">Season 2 &middot; Live classification updated after every match day</p>
+    </div>
+  </section>
+
+  <!-- ========== STANDINGS ========== -->
+  <section class="section standings-section" id="standings">
+    <div class="container">
+      <div class="standings-tabs fade-in" id="standingsTabs">
+        <button class="standings-tab active" data-group="whisky">&#129347; Whisky</button>
+        <button class="standings-tab" data-group="champagne">&#127870; Champagne</button>
+        <button class="standings-tab" data-group="coronita">&#127819; Coronita</button>
+        <button class="standings-tab" data-group="helles">&#127866; Helles</button>
+        <button class="standings-tab" data-group="weizen">&#127806; Weizen</button>
+      </div>
+      <div class="standings-table-wrapper fade-in" id="standingsContent">
+        <div class="standings-loading" id="standingsLoading">
+          <div class="standings-skeleton">
+            <div class="skeleton-row"></div>
+            <div class="skeleton-row"></div>
+            <div class="skeleton-row"></div>
+            <div class="skeleton-row"></div>
+            <div class="skeleton-row"></div>
+          </div>
+        </div>
+        <div class="standings-empty" id="standingsEmpty" style="display:none;">
+          <p>&#127870; Season 2 starts April 13th &mdash; standings will appear here</p>
+        </div>
+        <table class="standings-table" id="standingsTable" style="display:none;">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Player</th>
+              <th>MP</th>
+              <th>W</th>
+              <th>L</th>
+              <th>Pts</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody id="standingsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <img src="assets/logo.png" alt="Padel Champagne" class="footer-logo">
+        <p>Padel Champagne League</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/standings.js"></script>
+</body>
+</html>
