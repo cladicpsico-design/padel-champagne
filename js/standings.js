@@ -240,7 +240,7 @@ function renderTable(rows) {
     if (d.pos === 2) tr.classList.add('rank-2');
     if (d.pos === 3) tr.classList.add('rank-3');
 
-    // # Position (medal for top 3)
+    // # Position — medals for top 3, numbers for the rest
     var tdPos = document.createElement('td');
     if (d.pos === 1)      tdPos.innerHTML  = '&#129351;'; // 🥇
     else if (d.pos === 2) tdPos.innerHTML  = '&#129352;'; // 🥈
