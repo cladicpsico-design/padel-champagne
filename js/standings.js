@@ -242,7 +242,7 @@ function renderTable(rows) {
 
     // # Position (medal for top 3)
     var tdPos = document.createElement('td');
-    if (d.pos === 1)      tdPos.innerHTML  = '&#127949;'; // 🏅
+    if (d.pos === 1)      tdPos.innerHTML  = '&#129351;'; // 🥇
     else if (d.pos === 2) tdPos.innerHTML  = '&#129352;'; // 🥈
     else if (d.pos === 3) tdPos.innerHTML  = '&#129353;'; // 🥉
     else                  tdPos.textContent = d.pos;
