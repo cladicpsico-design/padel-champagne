@@ -230,22 +230,27 @@ function renderTable(rows) {
     }
   }
 
+  // Check if any matches have been played yet
+  var seasonStarted = data.some(function (p) { return toNum(p.pj) > 0; });
+
   // Build table rows
   for (var m = 0; m < data.length; m++) {
     var d  = data[m];
     var tr = document.createElement('tr');
 
-    // Highlight top 3
-    if (d.pos === 1) tr.classList.add('rank-1');
-    if (d.pos === 2) tr.classList.add('rank-2');
-    if (d.pos === 3) tr.classList.add('rank-3');
+    // Highlight top 3 only once season has started
+    if (seasonStarted) {
+      if (d.pos === 1) tr.classList.add('rank-1');
+      if (d.pos === 2) tr.classList.add('rank-2');
+      if (d.pos === 3) tr.classList.add('rank-3');
+    }
 
-    // # Position — medals for top 3, numbers for the rest
+    // # Position — medals for top 3 (only when season started), numbers otherwise
     var tdPos = document.createElement('td');
-    if (d.pos === 1)      tdPos.innerHTML  = '&#129351;'; // 🥇
-    else if (d.pos === 2) tdPos.innerHTML  = '&#129352;'; // 🥈
-    else if (d.pos === 3) tdPos.innerHTML  = '&#129353;'; // 🥉
-    else                  tdPos.textContent = d.pos;
+    if (seasonStarted && d.pos === 1)      tdPos.innerHTML  = '&#129351;'; // 🥇
+    else if (seasonStarted && d.pos === 2) tdPos.innerHTML  = '&#129352;'; // 🥈
+    else if (seasonStarted && d.pos === 3) tdPos.innerHTML  = '&#129353;'; // 🥉
+    else                                   tdPos.textContent = m + 1;
     tr.appendChild(tdPos);
 
     // Player
