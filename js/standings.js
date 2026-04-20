@@ -157,12 +157,17 @@ function toNum(val) {
   return parseFloat(String(val).replace(',', '.')) || 0;
 }
 
+// Matches needed before Rating takes over as the ranking criterion
+var RATING_THRESHOLD = 5;
+
 // ---------- Render table ----------
 // Sheet columns:
 //   A=Jugador  B=PJ  C=Ganados  D=Perdidos  E=Pts  F=Rating
 //
-// Ranking = sorted by Rating descending.
-// Tiebreaker = Pts descending.
+// Ranking rules:
+//   · PJ < 5  → sorted by Pts descending (preliminary, shown below rated players)
+//   · PJ ≥ 5  → sorted by Rating descending (official), Pts as tiebreaker
+//                These players always appear above PJ < 5 players.
 // Position numbers assigned automatically; ties share the same rank.
 function renderTable(rows) {
   var loading = document.getElementById('standingsLoading');
@@ -213,44 +218,75 @@ function renderTable(rows) {
     return;
   }
 
-  // Sort: Rating descending → Pts descending (tiebreaker)
+  // Sort: rated players (PJ ≥ 5) always above unrated (PJ < 5)
+  // Within rated   → Rating desc, then Pts desc
+  // Within unrated → Pts desc
   data.sort(function (a, b) {
-    if (b.rating !== a.rating) return b.rating - a.rating;
+    var aRated = toNum(a.pj) >= RATING_THRESHOLD;
+    var bRated = toNum(b.pj) >= RATING_THRESHOLD;
+    if (aRated && !bRated) return -1;
+    if (!aRated && bRated) return 1;
+    if (aRated && bRated) {
+      if (b.rating !== a.rating) return b.rating - a.rating;
+      return b.pts - a.pts;
+    }
+    // both unrated → by Pts
     return b.pts - a.pts;
   });
 
-  // Assign positions — tied players (same Rating AND Pts) share the same rank
+  // Assign positions — ties share the same rank
   for (var k = 0; k < data.length; k++) {
+    var kRated = toNum(data[k].pj) >= RATING_THRESHOLD;
     if (k === 0) {
       data[k].pos = 1;
-    } else if (data[k].rating === data[k - 1].rating && data[k].pts === data[k - 1].pts) {
-      data[k].pos = data[k - 1].pos; // same rank
     } else {
-      data[k].pos = k + 1;
+      var prevRated = toNum(data[k - 1].pj) >= RATING_THRESHOLD;
+      var tied = false;
+      if (kRated && prevRated) {
+        tied = data[k].rating === data[k - 1].rating && data[k].pts === data[k - 1].pts;
+      } else if (!kRated && !prevRated) {
+        tied = data[k].pts === data[k - 1].pts;
+      }
+      data[k].pos = tied ? data[k - 1].pos : k + 1;
     }
+    data[k].rated = kRated;
   }
 
   // Check if any matches have been played yet
   var seasonStarted = data.some(function (p) { return toNum(p.pj) > 0; });
 
   // Build table rows
+  var dividerAdded = false;
   for (var m = 0; m < data.length; m++) {
     var d  = data[m];
+
+    // Add a divider row between rated and unrated players
+    if (!dividerAdded && !d.rated && seasonStarted) {
+      var trDiv = document.createElement('tr');
+      trDiv.classList.add('standings-divider');
+      var tdDiv = document.createElement('td');
+      tdDiv.colSpan = 7;
+      tdDiv.textContent = '— provisional (< ' + RATING_THRESHOLD + ' matches) —';
+      trDiv.appendChild(tdDiv);
+      tbody.appendChild(trDiv);
+      dividerAdded = true;
+    }
+
     var tr = document.createElement('tr');
 
-    // Highlight top 3 only once season has started
-    if (seasonStarted) {
+    // Highlight top 3 only for rated players once season has started
+    if (seasonStarted && d.rated) {
       if (d.pos === 1) tr.classList.add('rank-1');
       if (d.pos === 2) tr.classList.add('rank-2');
       if (d.pos === 3) tr.classList.add('rank-3');
     }
 
-    // # Position — medals for top 3 (only when season started), numbers otherwise
+    // # Position — medals for top 3 rated players only
     var tdPos = document.createElement('td');
-    if (seasonStarted && d.pos === 1)      tdPos.innerHTML  = '&#129351;'; // 🥇
-    else if (seasonStarted && d.pos === 2) tdPos.innerHTML  = '&#129352;'; // 🥈
-    else if (seasonStarted && d.pos === 3) tdPos.innerHTML  = '&#129353;'; // 🥉
-    else                                   tdPos.textContent = m + 1;
+    if (seasonStarted && d.rated && d.pos === 1)      tdPos.innerHTML  = '&#129351;'; // 🥇
+    else if (seasonStarted && d.rated && d.pos === 2) tdPos.innerHTML  = '&#129352;'; // 🥈
+    else if (seasonStarted && d.rated && d.pos === 3) tdPos.innerHTML  = '&#129353;'; // 🥉
+    else                                              tdPos.textContent = m + 1;
     tr.appendChild(tdPos);
 
     // Player

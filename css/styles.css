@@ -784,6 +784,23 @@ img {
   font-weight: 600;
 }
 
+/* Divider between rated and provisional players */
+.standings-table tr.standings-divider td {
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.25);
+  padding: 8px 18px;
+  background: transparent;
+  border-top: 1px dashed rgba(255,255,255,0.08);
+  border-bottom: 1px dashed rgba(255,255,255,0.08);
+  font-family: 'DM Sans', sans-serif;
+}
+.standings-table tr.standings-divider:hover td {
+  background: transparent;
+  color: rgba(255,255,255,0.25);
+}
+
 /* W / L / Rating column colours */
 .standings-table td.col-wins {
   color: #6DBF7E;
