@@ -256,21 +256,8 @@ function renderTable(rows) {
   var seasonStarted = data.some(function (p) { return toNum(p.pj) > 0; });
 
   // Build table rows
-  var dividerAdded = false;
   for (var m = 0; m < data.length; m++) {
     var d  = data[m];
-
-    // Add a divider row between rated and unrated players
-    if (!dividerAdded && !d.rated && seasonStarted) {
-      var trDiv = document.createElement('tr');
-      trDiv.classList.add('standings-divider');
-      var tdDiv = document.createElement('td');
-      tdDiv.colSpan = 7;
-      tdDiv.textContent = '— provisional (< ' + RATING_THRESHOLD + ' matches) —';
-      trDiv.appendChild(tdDiv);
-      tbody.appendChild(trDiv);
-      dividerAdded = true;
-    }
 
     var tr = document.createElement('tr');
 
