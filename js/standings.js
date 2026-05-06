@@ -165,7 +165,7 @@ var RATING_THRESHOLD = 5;
 //   A=Jugador  B=PJ  C=Ganados  D=Perdidos  E=Pts  F=Rating
 //
 // Ranking rules:
-//   · PJ < 5  → sorted by Pts descending (preliminary, shown below rated players)
+//   · PJ < 5  → sorted by Rating descending (provisional, shown below rated players), Pts as tiebreaker
 //   · PJ ≥ 5  → sorted by Rating descending (official), Pts as tiebreaker
 //                These players always appear above PJ < 5 players.
 // Position numbers assigned automatically; ties share the same rank.
@@ -220,17 +220,14 @@ function renderTable(rows) {
 
   // Sort: rated players (PJ ≥ 5) always above unrated (PJ < 5)
   // Within rated   → Rating desc, then Pts desc
-  // Within unrated → Pts desc
+  // Within unrated → Rating desc, then Pts desc (same visual logic, provisional)
   data.sort(function (a, b) {
     var aRated = toNum(a.pj) >= RATING_THRESHOLD;
     var bRated = toNum(b.pj) >= RATING_THRESHOLD;
     if (aRated && !bRated) return -1;
     if (!aRated && bRated) return 1;
-    if (aRated && bRated) {
-      if (b.rating !== a.rating) return b.rating - a.rating;
-      return b.pts - a.pts;
-    }
-    // both unrated → by Pts
+    // both rated OR both unrated → Rating desc, Pts as tiebreaker
+    if (b.rating !== a.rating) return b.rating - a.rating;
     return b.pts - a.pts;
   });
 
@@ -242,10 +239,10 @@ function renderTable(rows) {
     } else {
       var prevRated = toNum(data[k - 1].pj) >= RATING_THRESHOLD;
       var tied = false;
-      if (kRated && prevRated) {
+      if (kRated !== prevRated) {
+        tied = false; // never tie across the rated/unrated boundary
+      } else {
         tied = data[k].rating === data[k - 1].rating && data[k].pts === data[k - 1].pts;
-      } else if (!kRated && !prevRated) {
-        tied = data[k].pts === data[k - 1].pts;
       }
       data[k].pos = tied ? data[k - 1].pos : k + 1;
     }
