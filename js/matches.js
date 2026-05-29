@@ -100,7 +100,11 @@ function renderMainSection() {
       document.querySelectorAll('.mc-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.mc-tab-panel').forEach(p => { p.style.display = 'none'; });
       tab.classList.add('active');
-      document.getElementById('tab' + tab.dataset.tab.charAt(0).toUpperCase() + tab.dataset.tab.slice(1)).style.display = 'block';
+      const panelId = 'tab' + tab.dataset.tab.charAt(0).toUpperCase() + tab.dataset.tab.slice(1);
+      document.getElementById(panelId).style.display = 'block';
+      // Refresh data when switching tabs
+      if (tab.dataset.tab === 'mymatch') loadMyMatches();
+      if (tab.dataset.tab === 'slots')   loadSlots();
     });
   });
 
@@ -275,7 +279,8 @@ async function toggleAvailability(slotKey) {
   }
 
   btn.disabled = false;
-  loadSlots(); // refresh
+  loadSlots();
+  loadMyMatches();
 }
 
 // ---- My Matches ----
