@@ -108,14 +108,22 @@ function renderMainSection() {
   loadMyMatches();
 }
 
-// ---- Load slots from Google Sheet ----
+// ---- Load slots from ALL groups ----
 async function loadSlots() {
   document.getElementById('slotsLoading').style.display = 'flex';
   document.getElementById('slotsEmpty').style.display   = 'none';
   document.getElementById('slotsList').innerHTML        = '';
 
-  const group  = currentPlayer.group_name;
-  const slots  = await fetchSlotsFromSheet(group);
+  // Fetch ALL groups in parallel (everyone sees the full league schedule)
+  const groupKeys = Object.keys(GROUPS);
+  const results   = await Promise.all(groupKeys.map(g => fetchSlotsFromSheet(g)));
+
+  // Flatten + tag with group, sort by date
+  let allSlots = [];
+  groupKeys.forEach((g, i) => {
+    results[i].forEach(slot => allSlots.push({ ...slot, group: g }));
+  });
+  allSlots.sort((a, b) => a.slotKey.localeCompare(b.slotKey));
 
   // Fetch my availability
   const { data: avail } = await _supabase
@@ -123,7 +131,7 @@ async function loadSlots() {
   myAvailability = new Set((avail || []).map(a => a.slot_key));
 
   // Fetch signup counts for all slots at once
-  const keys = slots.map(s => s.slotKey);
+  const keys = allSlots.map(s => s.slotKey);
   const countMap = {};
   if (keys.length > 0) {
     const { data: counts } = await _supabase
@@ -133,22 +141,23 @@ async function loadSlots() {
 
   document.getElementById('slotsLoading').style.display = 'none';
 
-  if (slots.length === 0) {
+  if (allSlots.length === 0) {
     document.getElementById('slotsEmpty').style.display = 'block'; return;
   }
 
-  const grp       = GROUPS[group] || { emoji:'🎾', label: group, color:'#C9A84C' };
   const container = document.getElementById('slotsList');
-  slots.forEach(slot => {
-    const count  = countMap[slot.slotKey] || 0;
-    const signed = myAvailability.has(slot.slotKey);
-    container.appendChild(buildSlotCard(slot, count, signed, grp));
+  allSlots.forEach(slot => {
+    const count     = countMap[slot.slotKey] || 0;
+    const signed    = myAvailability.has(slot.slotKey);
+    const grp       = GROUPS[slot.group] || { emoji:'🎾', label: slot.group, color:'#C9A84C' };
+    const isMyGroup = slot.group === currentPlayer.group_name;
+    container.appendChild(buildSlotCard(slot, count, signed, grp, isMyGroup));
   });
 }
 
-function buildSlotCard(slot, signedCount, isSigned, grp) {
+function buildSlotCard(slot, signedCount, isSigned, grp, isMyGroup) {
   const card = document.createElement('div');
-  card.className = 'mc-slot-card fade-in';
+  card.className = 'mc-slot-card fade-in' + (isMyGroup ? '' : ' mc-slot-card-other');
 
   // Build 4 spots
   let spotsHTML = '';
@@ -160,6 +169,14 @@ function buildSlotCard(slot, signedCount, isSigned, grp) {
     }
   }
 
+  // Action: join button for own group, read-only label for others
+  const actionHTML = isMyGroup
+    ? `<button class="mc-btn ${isSigned ? 'mc-btn-signed' : 'mc-btn-primary'} mc-join-btn"
+               data-slot-key="${slot.slotKey}" data-signed="${isSigned}">
+         ${isSigned ? '✓ You\'re in &nbsp;·&nbsp; Cancel' : 'Join this match'}
+       </button>`
+    : `<div class="mc-slot-other-label">👀 Other group — view only</div>`;
+
   card.innerHTML = `
     <div class="mc-slot-top">
       <span class="mc-slot-date">${formatDate(slot.date)}</span>
@@ -169,13 +186,12 @@ function buildSlotCard(slot, signedCount, isSigned, grp) {
       ⏰ <strong>${slot.time}</strong> &nbsp;·&nbsp; 📍 ${slot.location}
     </div>
     <div class="mc-spots">${spotsHTML}</div>
-    <button class="mc-btn ${isSigned ? 'mc-btn-signed' : 'mc-btn-primary'} mc-join-btn"
-            data-slot-key="${slot.slotKey}" data-signed="${isSigned}">
-      ${isSigned ? '✓ You\'re in &nbsp;·&nbsp; Cancel' : 'Join this match'}
-    </button>
+    ${actionHTML}
   `;
 
-  card.querySelector('.mc-join-btn').addEventListener('click', () => toggleAvailability(slot.slotKey));
+  if (isMyGroup) {
+    card.querySelector('.mc-join-btn').addEventListener('click', () => toggleAvailability(slot.slotKey));
+  }
   return card;
 }
 

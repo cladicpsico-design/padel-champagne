@@ -46,46 +46,6 @@
   <section class="section" id="adminContent" style="display:none;">
     <div class="container">
 
-      <!-- ---- CREATE SLOT ---- -->
-      <div class="admin-block fade-in">
-        <h2 class="admin-block-title">➕ Create new slot</h2>
-        <form id="createSlotForm" class="admin-form">
-          <div class="admin-form-row">
-            <div class="admin-field">
-              <label class="admin-label">Date</label>
-              <input type="date" id="slotDate" class="mc-input" required>
-            </div>
-            <div class="admin-field">
-              <label class="admin-label">Time</label>
-              <input type="time" id="slotTime" class="mc-input" required>
-            </div>
-          </div>
-          <div class="admin-form-row">
-            <div class="admin-field">
-              <label class="admin-label">Location</label>
-              <input type="text" id="slotLocation" class="mc-input" placeholder="Wallau, Padellers…" required>
-            </div>
-            <div class="admin-field">
-              <label class="admin-label">Group</label>
-              <select id="slotGroup" class="mc-input mc-select" required>
-                <option value="">Select group…</option>
-                <option value="whisky">🥃 Whisky</option>
-                <option value="champagne">🍾 Champagne</option>
-                <option value="coronita">🍺 Coronita</option>
-                <option value="helles">🍺 Helles</option>
-                <option value="weizen">🌾 Weizen</option>
-              </select>
-            </div>
-          </div>
-          <div class="admin-field">
-            <label class="admin-label">Notes (optional)</label>
-            <input type="text" id="slotNotes" class="mc-input" placeholder="Any extra info…">
-          </div>
-          <button type="submit" class="mc-btn mc-btn-primary" id="createSlotBtn">Create slot</button>
-        </form>
-        <div id="createSlotMsg" class="mc-msg" style="display:none;"></div>
-      </div>
-
       <!-- ---- UPCOMING SLOTS ---- -->
       <div class="admin-block fade-in">
         <h2 class="admin-block-title">📅 Upcoming slots</h2>

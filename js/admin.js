@@ -156,6 +156,7 @@ async function loadAdminPlayers() {
 
   document.getElementById('adminPlayersLoading').style.display = 'none';
   const container = document.getElementById('adminPlayersList');
+  container.innerHTML = '';
 
   if (!players || players.length === 0) {
     container.innerHTML = '<p class="mc-empty-text">No players yet.</p>'; return;
@@ -167,22 +168,63 @@ async function loadAdminPlayers() {
     byGroup[p.group_name].push(p);
   });
 
+  // Build group-options HTML (reusable)
+  const groupOptions = Object.entries(GROUPS)
+    .map(([k, v]) => `<option value="${k}">${v.emoji} ${v.label}</option>`)
+    .join('');
+
   Object.entries(byGroup).forEach(([key, grpPlayers]) => {
     const grp = GROUPS[key] || { emoji:'🎾', label: key, color:'#C9A84C' };
     const sec = document.createElement('div');
     sec.className = 'admin-group-section';
-    sec.innerHTML = `
-      <div class="admin-group-header" style="--g:${grp.color}">
-        ${grp.emoji} ${grp.label} <span class="admin-group-count">(${grpPlayers.length})</span>
-      </div>
-      <div class="admin-players-grid">
-        ${grpPlayers.map(p => `
-          <div class="admin-player-chip ${p.is_admin ? 'admin-player-chip-admin' : ''}">
-            <span class="admin-player-name">${p.name}${p.is_admin ? ' ⭐' : ''}</span>
-            <span class="admin-player-email">${p.email}</span>
-            <span class="admin-player-linked">${p.auth_id ? '✅ logged in' : '⏳ not yet'}</span>
-          </div>`).join('')}
-      </div>`;
+
+    const header = document.createElement('div');
+    header.className = 'admin-group-header';
+    header.style.setProperty('--g', grp.color);
+    header.innerHTML = `${grp.emoji} ${grp.label} <span class="admin-group-count">(${grpPlayers.length})</span>`;
+    sec.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.className = 'admin-players-grid';
+
+    grpPlayers.forEach(p => {
+      const chip = document.createElement('div');
+      chip.className = 'admin-player-chip' + (p.is_admin ? ' admin-player-chip-admin' : '');
+      chip.innerHTML = `
+        <span class="admin-player-name">${p.name}${p.is_admin ? ' ⭐' : ''}</span>
+        <span class="admin-player-email">${p.email}</span>
+        <span class="admin-player-linked">${p.auth_id ? '✅ logged in' : '⏳ not yet'}</span>
+        <div class="admin-player-actions">
+          <select class="admin-group-select">
+            ${Object.entries(GROUPS).map(([k, v]) =>
+              `<option value="${k}" ${k === p.group_name ? 'selected' : ''}>${v.emoji} ${v.label}</option>`
+            ).join('')}
+          </select>
+          <button class="mc-btn mc-btn-danger admin-remove-btn" title="Remove player">✕</button>
+        </div>`;
+
+      // Change group on select
+      chip.querySelector('.admin-group-select').addEventListener('change', async (e) => {
+        const newGroup = e.target.value;
+        if (newGroup === p.group_name) return;
+        const { error } = await _supabase.from('players')
+          .update({ group_name: newGroup }).eq('id', p.id);
+        if (error) { alert('Error: ' + error.message); e.target.value = p.group_name; return; }
+        loadAdminPlayers(); // refresh entire list
+      });
+
+      // Remove player
+      chip.querySelector('.admin-remove-btn').addEventListener('click', async () => {
+        if (!confirm(`Remove ${p.name} from the league?\nThis will delete all their availability data too.`)) return;
+        const { error } = await _supabase.from('players').delete().eq('id', p.id);
+        if (error) { alert('Error: ' + error.message); return; }
+        loadAdminPlayers();
+      });
+
+      grid.appendChild(chip);
+    });
+
+    sec.appendChild(grid);
     container.appendChild(sec);
   });
 }

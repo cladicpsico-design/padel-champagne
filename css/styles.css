@@ -1569,6 +1569,48 @@ img {
 .admin-player-email  { color: var(--white-muted); font-size: .77rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .admin-player-linked { font-size: .75rem; color: var(--white-muted); margin-top: 2px; }
 
+/* Admin: per-player group change + remove */
+.admin-player-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  align-items: center;
+}
+.admin-group-select {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .78rem;
+  padding: 5px 8px;
+  cursor: pointer;
+  appearance: auto;
+}
+.admin-group-select:focus { outline: none; border-color: var(--gold); }
+.admin-remove-btn {
+  padding: 5px 9px !important;
+  font-size: .78rem !important;
+  line-height: 1;
+}
+
+/* Other-group slot cards — visible but muted */
+.mc-slot-card-other {
+  opacity: 0.72;
+  border-color: rgba(255,255,255,0.04);
+}
+.mc-slot-card-other:hover {
+  opacity: 0.9;
+  border-color: rgba(255,255,255,0.1);
+}
+.mc-slot-other-label {
+  font-size: .82rem;
+  color: var(--white-muted);
+  padding: 8px 0 2px;
+  letter-spacing: .3px;
+}
+
 /* ---- Mobile tweaks ---- */
 @media (max-width: 480px) {
   .admin-form-row { grid-template-columns: 1fr; }
@@ -1576,5 +1618,4 @@ img {
   .mc-team { flex-direction: row; flex-wrap: wrap; }
   .admin-slot-actions { flex-direction: row; }
   .mc-btn-primary, .mc-btn-signed { font-size: .85rem; padding: 10px 14px; }
-}
 }
