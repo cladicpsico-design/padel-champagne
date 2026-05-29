@@ -1388,6 +1388,51 @@ img {
 .mc-slot-count { font-size: .82rem; color: var(--white-muted); }
 .mc-full { color: #6DBF7E; }
 
+/* ---- Slot time/location line ---- */
+.mc-slot-time-loc {
+  color: var(--white-muted);
+  font-size: .9rem;
+  margin-bottom: 14px;
+}
+.mc-slot-time-loc strong { color: var(--white); }
+
+/* ---- 4 spots (WhatsApp style) ---- */
+.mc-spots {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.mc-spot {
+  align-items: center;
+  border-radius: 8px;
+  display: flex;
+  font-size: .9rem;
+  gap: 8px;
+  padding: 9px 12px;
+}
+.mc-spot-taken {
+  background: rgba(109,191,126,0.08);
+  color: rgba(255,255,255,0.55);
+  border: 1px solid rgba(109,191,126,0.2);
+}
+.mc-spot-free {
+  background: rgba(255,255,255,0.03);
+  color: var(--white-muted);
+  border: 1px dashed rgba(255,255,255,0.1);
+}
+.mc-spot-extra {
+  background: rgba(232,197,71,0.08);
+  color: #E8C547;
+  border: 1px solid rgba(232,197,71,0.2);
+  font-size: .82rem;
+}
+/* Admin sees names in spots */
+.mc-spots-admin .mc-spot-taken {
+  color: var(--white);
+  font-weight: 500;
+}
+
 /* ---- Match cards ---- */
 .mc-match-card {
   background: var(--bg-card);
