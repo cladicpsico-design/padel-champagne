@@ -155,19 +155,15 @@ async function loadSlots() {
   if (mySlots.length > 0) {
     const sec = document.createElement('div');
     sec.className = 'mc-section-header';
-    sec.innerHTML = `<span style="color:${myGrp.color}">${myGrp.emoji} ${myGrp.label}</span> — Tu grupo`;
+    sec.innerHTML = `<span style="color:${myGrp.color}">${myGrp.emoji} ${myGrp.label}</span> — Your group`;
     container.appendChild(sec);
 
     mySlots.forEach(slot => {
-      try {
-        const signupCount = countMap[slot.slotKey] || 0;
-        const taken  = (slot.sheetPlayerCount || 0) > 0 ? (slot.sheetPlayerCount || 0) : signupCount;
-        const signed = myAvailability.has(slot.slotKey);
-        const isOpen = (slot.sheetPlayerCount || 0) < 4;
-        container.appendChild(buildSlotCard(slot, taken, signed, myGrp, isOpen));
-      } catch(err) {
-        console.error('buildSlotCard error:', err, slot);
-      }
+      const signupCount = countMap[slot.slotKey] || 0;
+      const taken  = (slot.sheetPlayerCount || 0) > 0 ? (slot.sheetPlayerCount || 0) : signupCount;
+      const signed = myAvailability.has(slot.slotKey);
+      const isOpen = (slot.sheetPlayerCount || 0) < 4;
+      container.appendChild(buildSlotCard(slot, taken, signed, myGrp, isOpen));
     });
   }
 
@@ -175,7 +171,7 @@ async function loadSlots() {
   if (otherSlots.length > 0) {
     const sec = document.createElement('div');
     sec.className = 'mc-section-header mc-section-league';
-    sec.innerHTML = `🗓️ Otros partidos`;
+    sec.innerHTML = `🗓️ Other matches`;
     container.appendChild(sec);
 
     // Group other slots by date
@@ -212,22 +208,22 @@ function buildSlotCard(slot, takenCount, isSigned, grp, isOpen) {
   let spotsHTML = '';
   for (let i = 0; i < 4; i++) {
     spotsHTML += i < takenCount
-      ? `<div class="mc-spot mc-spot-taken">🎾 Ocupado</div>`
-      : `<div class="mc-spot mc-spot-free">🎾 Libre</div>`;
+      ? `<div class="mc-spot mc-spot-taken">🎾 Taken</div>`
+      : `<div class="mc-spot mc-spot-free">🎾 Spot free</div>`;
   }
 
   let actionHTML = '';
   if (isOpen) {
     actionHTML = `<button class="mc-btn ${isSigned ? 'mc-btn-signed' : 'mc-btn-primary'} mc-join-btn"
       data-slot-key="${slot.slotKey}" data-signed="${isSigned}">
-      ${isSigned ? '✓ Apuntado &nbsp;·&nbsp; Cancelar' : 'Apuntarme'}
+      ${isSigned ? '✓ You\'re in &nbsp;·&nbsp; Cancel' : 'Join this match'}
     </button>`;
   } else {
-    actionHTML = `<div class="mc-slot-assigned">✅ Partido confirmado</div>`;
+    actionHTML = `<div class="mc-slot-assigned">✅ Match assigned</div>`;
   }
 
   const timeStr = slot.time === 'TBD'
-    ? '<span class="mc-time-tbd">⏳ Hora por confirmar</span>'
+    ? '<span class="mc-time-tbd">⏳ Time TBD</span>'
     : `<strong>${slot.time}</strong>`;
 
   card.innerHTML = `
@@ -253,7 +249,7 @@ function buildCompactRow(slot, grp) {
 
   const free = 4 - slot.sheetPlayerCount;
   const statusClass = free === 0 ? 'mc-compact-full' : free === 4 ? 'mc-compact-open' : 'mc-compact-partial';
-  const statusText  = free === 0 ? 'Lleno' : free === 4 ? '4 libres' : `${free} libres`;
+  const statusText  = free === 0 ? 'Full' : free === 4 ? '4 free' : `${free} free`;
   const timeLabel   = slot.time === 'TBD' ? '⏳' : slot.time;
 
   row.innerHTML = `
@@ -289,20 +285,70 @@ async function loadMyMatches() {
   document.getElementById('matchesList').innerHTML        = '';
 
   const pid = currentPlayer.id;
-  const { data: matches } = await _supabase.from('matches')
-    .select(`*, p1:players!matches_player1_id_fkey(id,name), p2:players!matches_player2_id_fkey(id,name),
-             p3:players!matches_player3_id_fkey(id,name), p4:players!matches_player4_id_fkey(id,name)`)
-    .or(`player1_id.eq.${pid},player2_id.eq.${pid},player3_id.eq.${pid},player4_id.eq.${pid}`)
-    .order('created_at', { ascending: false });
+
+  // Fetch drawn matches + my availability signups in parallel
+  const [{ data: matches }, { data: signups }] = await Promise.all([
+    _supabase.from('matches')
+      .select(`*, p1:players!matches_player1_id_fkey(id,name), p2:players!matches_player2_id_fkey(id,name),
+               p3:players!matches_player3_id_fkey(id,name), p4:players!matches_player4_id_fkey(id,name)`)
+      .or(`player1_id.eq.${pid},player2_id.eq.${pid},player3_id.eq.${pid},player4_id.eq.${pid}`)
+      .order('created_at', { ascending: false }),
+    _supabase.from('availability')
+      .select('slot_key')
+      .eq('player_id', pid)
+      .order('slot_key')
+  ]);
 
   document.getElementById('matchesLoading').style.display = 'none';
 
-  if (!matches || matches.length === 0) {
+  const drawnKeys   = new Set((matches || []).map(m => m.slot_key));
+  const pendingList = (signups || []).filter(s => !drawnKeys.has(s.slot_key));
+  const hasContent  = (matches && matches.length > 0) || pendingList.length > 0;
+
+  if (!hasContent) {
     document.getElementById('matchesEmpty').style.display = 'block'; return;
   }
 
   const container = document.getElementById('matchesList');
-  matches.forEach(m => container.appendChild(buildMatchCard(m)));
+
+  // ── Confirmed drawn matches ──
+  if (matches && matches.length > 0) {
+    const hdr = document.createElement('div');
+    hdr.className = 'mc-section-header';
+    hdr.textContent = '✅ Confirmed matches';
+    container.appendChild(hdr);
+    matches.forEach(m => container.appendChild(buildMatchCard(m)));
+  }
+
+  // ── Pending availability (signed up, awaiting draw) ──
+  if (pendingList.length > 0) {
+    const hdr = document.createElement('div');
+    hdr.className = 'mc-section-header';
+    hdr.textContent = '⏳ Signed up — awaiting draw';
+    container.appendChild(hdr);
+    pendingList.forEach(s => container.appendChild(buildPendingCard(s.slot_key)));
+  }
+}
+
+function buildPendingCard(slotKey) {
+  const parts    = slotKey.split('|');
+  const date     = parts[0] || '';
+  const time     = parts[1] || '';
+  const location = parts[2] || '';
+
+  const card = document.createElement('div');
+  card.className = 'mc-match-card';
+  card.innerHTML = `
+    <div class="mc-match-header">
+      <span class="mc-match-date">${formatDate(date)} · ${time === 'TBD' ? '⏳ TBD' : time}</span>
+    </div>
+    <div class="mc-match-location">📍 ${location}</div>
+    <div class="mc-match-hidden">
+      🎲 <strong>Draw pending</strong>
+      <span>You're signed up — opponents assigned when the draw runs</span>
+    </div>
+  `;
+  return card;
 }
 
 function buildMatchCard(match) {
