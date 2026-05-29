@@ -124,8 +124,9 @@ async function loadSlots() {
   });
   allSlots.sort((a, b) => a.slotKey.localeCompare(b.slotKey));
 
-  const mySlots    = allSlots.filter(s => s.group === currentPlayer.group_name);
-  const otherSlots = allSlots.filter(s => s.group !== currentPlayer.group_name);
+  const myGroup    = (currentPlayer.group_name || '').toLowerCase();
+  const mySlots    = allSlots.filter(s => s.group.toLowerCase() === myGroup);
+  const otherSlots = allSlots.filter(s => s.group.toLowerCase() !== myGroup);
 
   // Fetch my availability
   const { data: avail } = await _supabase
@@ -158,12 +159,15 @@ async function loadSlots() {
     container.appendChild(sec);
 
     mySlots.forEach(slot => {
-      const signupCount = countMap[slot.slotKey] || 0;
-      // Use sheet players if pre-assigned, otherwise Supabase signups
-      const takenCount  = slot.sheetPlayerCount > 0 ? slot.sheetPlayerCount : signupCount;
-      const signed      = myAvailability.has(slot.slotKey);
-      const isOpen      = slot.sheetPlayerCount < 4; // not fully assigned yet
-      container.appendChild(buildSlotCard(slot, takenCount, signed, myGrp, isOpen));
+      try {
+        const signupCount = countMap[slot.slotKey] || 0;
+        const taken  = (slot.sheetPlayerCount || 0) > 0 ? (slot.sheetPlayerCount || 0) : signupCount;
+        const signed = myAvailability.has(slot.slotKey);
+        const isOpen = (slot.sheetPlayerCount || 0) < 4;
+        container.appendChild(buildSlotCard(slot, taken, signed, myGrp, isOpen));
+      } catch(err) {
+        console.error('buildSlotCard error:', err, slot);
+      }
     });
   }
 
@@ -183,7 +187,7 @@ async function loadSlots() {
 
     Object.entries(byDate).forEach(([date, slots]) => {
       const dayWrap = document.createElement('div');
-      dayWrap.className = 'mc-day-group fade-in';
+      dayWrap.className = 'mc-day-group';
 
       const dayHdr = document.createElement('div');
       dayHdr.className = 'mc-day-header';
@@ -203,7 +207,7 @@ async function loadSlots() {
 // ── Full card — own group ─────────────────────────────────────────
 function buildSlotCard(slot, takenCount, isSigned, grp, isOpen) {
   const card = document.createElement('div');
-  card.className = 'mc-slot-card fade-in';
+  card.className = 'mc-slot-card';
 
   let spotsHTML = '';
   for (let i = 0; i < 4; i++) {
