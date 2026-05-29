@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matches — Padel Champagne</title>
+  <meta name="description" content="Sign up for matches and see your schedule in the Padel Champagne league.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Lora:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DED6T6CSLQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DED6T6CSLQ');
+  </script>
+</head>
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-logo">
+        <img src="assets/logo.png" alt="Padel Champagne" class="navbar-logo-img">
+        <span>PADEL CHAMPAGNE</span>
+      </a>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="navbar-menu" id="navbarMenu">
+        <li><a href="index.html"     class="navbar-link">Home</a></li>
+        <li><a href="league.html"    class="navbar-link">League</a></li>
+        <li><a href="standings.html" class="navbar-link">Standings</a></li>
+        <li><a href="matches.html"   class="navbar-link active">Matches</a></li>
+        <li><a href="events.html"    class="navbar-link">Events</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ========== PAGE TABS ========== -->
+  <div class="page-tabs">
+    <a href="index.html"     class="page-tab">Home</a>
+    <a href="league.html"    class="page-tab">League</a>
+    <a href="standings.html" class="page-tab">Standings</a>
+    <a href="matches.html"   class="page-tab active">Matches</a>
+    <a href="events.html"    class="page-tab">Events</a>
+  </div>
+
+  <!-- ========== PAGE HERO ========== -->
+  <section class="page-hero">
+    <div class="container">
+      <h1 class="page-hero-title">MATCHES</h1>
+      <p class="page-hero-subtitle" id="heroSubtitle">Sign in to view and join your matches</p>
+    </div>
+  </section>
+
+  <!-- ========== LOGIN SECTION ========== -->
+  <section class="section" id="loginSection">
+    <div class="container">
+      <div class="mc-card mc-card-center fade-in">
+        <div class="mc-card-icon">🎾</div>
+        <h3 class="mc-card-title">Player login</h3>
+        <p class="mc-card-desc">Enter your email and we'll send you a one-click sign-in link — no password needed.</p>
+        <form id="loginForm" class="mc-form">
+          <input type="email" id="loginEmail" class="mc-input" placeholder="your@email.com" required autocomplete="email">
+          <button type="submit" class="mc-btn mc-btn-primary" id="loginBtn">Send sign-in link</button>
+        </form>
+        <div id="loginMsg" class="mc-msg" style="display:none;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PROFILE SETUP ========== -->
+  <section class="section" id="profileSection" style="display:none;">
+    <div class="container">
+      <div class="mc-card mc-card-center fade-in">
+        <div class="mc-card-icon">👋</div>
+        <h3 class="mc-card-title">One more step</h3>
+        <p class="mc-card-desc">Tell us your name and which group you play in.</p>
+        <form id="profileForm" class="mc-form">
+          <input type="text" id="profileName" class="mc-input" placeholder="Your name (e.g. Nico)" required maxlength="50">
+          <select id="profileGroup" class="mc-input mc-select" required>
+            <option value="">Select your group…</option>
+            <option value="whisky">🥃 Whisky</option>
+            <option value="champagne">🍾 Champagne</option>
+            <option value="coronita">🍺 Coronita</option>
+            <option value="helles">🍺 Helles</option>
+            <option value="weizen">🌾 Weizen</option>
+          </select>
+          <button type="submit" class="mc-btn mc-btn-primary" id="profileBtn">Save &amp; continue →</button>
+        </form>
+        <div id="profileMsg" class="mc-msg" style="display:none;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== MAIN CONTENT (logged in) ========== -->
+  <section class="section" id="mainSection" style="display:none;">
+    <div class="container">
+
+      <!-- User bar -->
+      <div class="mc-userbar fade-in">
+        <div class="mc-userbar-left">
+          <span id="userGreeting" class="mc-greeting">Hey!</span>
+          <span id="userGroupBadge" class="mc-group-badge"></span>
+        </div>
+        <div class="mc-userbar-right">
+          <a href="admin.html" class="mc-btn mc-btn-ghost mc-admin-btn" id="adminLink" style="display:none;">⚙️ Admin</a>
+          <button class="mc-btn mc-btn-ghost" id="signOutBtn">Sign out</button>
+        </div>
+      </div>
+
+      <!-- Content tabs -->
+      <div class="mc-tabs fade-in">
+        <button class="mc-tab active" data-tab="slots">📅 Available slots</button>
+        <button class="mc-tab"        data-tab="mymatch">🎯 My matches</button>
+      </div>
+
+      <!-- ---- SLOTS TAB ---- -->
+      <div id="tabSlots" class="mc-tab-panel">
+        <div id="slotsLoading" class="mc-loading">
+          <div class="mc-spinner"></div> Loading slots…
+        </div>
+        <div id="slotsEmpty" class="mc-empty" style="display:none;">
+          <p>🎾 No open slots for your group right now.<br>Check back soon!</p>
+        </div>
+        <div id="slotsList"></div>
+      </div>
+
+      <!-- ---- MY MATCHES TAB ---- -->
+      <div id="tabMymatch" class="mc-tab-panel" style="display:none;">
+        <div id="matchesLoading" class="mc-loading">
+          <div class="mc-spinner"></div> Loading matches…
+        </div>
+        <div id="matchesEmpty" class="mc-empty" style="display:none;">
+          <p>🎾 No matches assigned yet.<br>Sign up for a slot to get started!</p>
+        </div>
+        <div id="matchesList"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <img src="assets/logo.png" alt="Padel Champagne" class="footer-logo">
+        <p>Padel Champagne League</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/matches.js"></script>
+</body>
+</html>

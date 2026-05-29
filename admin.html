@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Padel Champagne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Lora:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-logo">
+        <img src="assets/logo.png" alt="Padel Champagne" class="navbar-logo-img">
+        <span>PADEL CHAMPAGNE</span>
+      </a>
+      <ul class="navbar-menu" id="navbarMenu">
+        <li><a href="matches.html" class="navbar-link">← Matches</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ========== HERO ========== -->
+  <section class="page-hero" style="padding-top: 120px;">
+    <div class="container">
+      <h1 class="page-hero-title">ADMIN PANEL</h1>
+      <p class="page-hero-subtitle">Match management &amp; blind draw control</p>
+    </div>
+  </section>
+
+  <!-- ========== NOT ADMIN ========== -->
+  <section class="section" id="notAdminSection" style="display:none;">
+    <div class="container">
+      <div class="mc-card mc-card-center fade-in">
+        <p>⛔ You don't have admin access.</p>
+        <a href="matches.html" class="mc-btn mc-btn-primary" style="margin-top:16px;">Go to Matches</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ADMIN CONTENT ========== -->
+  <section class="section" id="adminContent" style="display:none;">
+    <div class="container">
+
+      <!-- ---- CREATE SLOT ---- -->
+      <div class="admin-block fade-in">
+        <h2 class="admin-block-title">➕ Create new slot</h2>
+        <form id="createSlotForm" class="admin-form">
+          <div class="admin-form-row">
+            <div class="admin-field">
+              <label class="admin-label">Date</label>
+              <input type="date" id="slotDate" class="mc-input" required>
+            </div>
+            <div class="admin-field">
+              <label class="admin-label">Time</label>
+              <input type="time" id="slotTime" class="mc-input" required>
+            </div>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-field">
+              <label class="admin-label">Location</label>
+              <input type="text" id="slotLocation" class="mc-input" placeholder="Wallau, Padellers…" required>
+            </div>
+            <div class="admin-field">
+              <label class="admin-label">Group</label>
+              <select id="slotGroup" class="mc-input mc-select" required>
+                <option value="">Select group…</option>
+                <option value="whisky">🥃 Whisky</option>
+                <option value="champagne">🍾 Champagne</option>
+                <option value="coronita">🍺 Coronita</option>
+                <option value="helles">🍺 Helles</option>
+                <option value="weizen">🌾 Weizen</option>
+              </select>
+            </div>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label">Notes (optional)</label>
+            <input type="text" id="slotNotes" class="mc-input" placeholder="Any extra info…">
+          </div>
+          <button type="submit" class="mc-btn mc-btn-primary" id="createSlotBtn">Create slot</button>
+        </form>
+        <div id="createSlotMsg" class="mc-msg" style="display:none;"></div>
+      </div>
+
+      <!-- ---- UPCOMING SLOTS ---- -->
+      <div class="admin-block fade-in">
+        <h2 class="admin-block-title">📅 Upcoming slots</h2>
+        <div id="adminSlotsLoading" class="mc-loading"><div class="mc-spinner"></div> Loading…</div>
+        <div id="adminSlotsList"></div>
+      </div>
+
+      <!-- ---- PLAYERS ---- -->
+      <div class="admin-block fade-in">
+        <h2 class="admin-block-title">👥 Registered players</h2>
+        <div id="adminPlayersLoading" class="mc-loading"><div class="mc-spinner"></div> Loading…</div>
+        <div id="adminPlayersList"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <img src="assets/logo.png" alt="Padel Champagne" class="footer-logo">
+        <p>Padel Champagne League</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
