@@ -68,6 +68,7 @@ function makeSlotKey(date, time, location) {
 
 // Is this slot revealed? (48h before match time)
 function isRevealed(dateStr, timeStr) {
+  if (!timeStr || timeStr === 'TBD') return false; // unknown time → keep hidden
   const [y, m, d] = dateStr.split('-').map(Number);
   const [h, min]  = timeStr.split(':').map(Number);
   const matchDt   = new Date(y, m - 1, d, h, min);
@@ -75,6 +76,7 @@ function isRevealed(dateStr, timeStr) {
 }
 
 function revealDateLabel(dateStr, timeStr) {
+  if (!timeStr || timeStr === 'TBD') return 'time confirmed';
   const [y, m, d] = dateStr.split('-').map(Number);
   const [h, min]  = timeStr.split(':').map(Number);
   const reveal    = new Date(new Date(y, m-1, d, h, min).getTime() - 48*60*60*1000);
@@ -106,17 +108,21 @@ async function fetchSlotsFromSheet(groupKey) {
       const locRaw   = row[2] || '';
 
       const date     = parseSheetDate(dateRaw);
-      const time     = parseSheetTime(timeRaw);
+      const time     = parseSheetTime(timeRaw) || 'TBD';
       const location = locRaw.trim();
 
-      if (!date || !time || !location) continue;
+      if (!date || !location) continue;
 
       // Only future matches
       const [y, mo, d] = date.split('-').map(Number);
       const slotDate = new Date(y, mo - 1, d);
       if (slotDate < today) continue;
 
-      slots.push({ date, time, location, slotKey: makeSlotKey(date, time, location) });
+      // Count pre-assigned players from sheet (Jugador 1–4 = cols 3–6)
+      const sheetPlayerCount = [row[3], row[4], row[5], row[6]]
+        .filter(v => v && v.trim() !== '').length;
+
+      slots.push({ date, time, location, slotKey: makeSlotKey(date, time, location), sheetPlayerCount });
     }
 
     // Sort by date then time

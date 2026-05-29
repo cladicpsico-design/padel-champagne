@@ -1595,21 +1595,87 @@ img {
   line-height: 1;
 }
 
-/* Other-group slot cards — visible but muted */
-.mc-slot-card-other {
-  opacity: 0.72;
-  border-color: rgba(255,255,255,0.04);
+/* TBD time indicator */
+.mc-time-tbd {
+  color: #E8C547;
+  font-size: .85rem;
+  font-weight: 500;
 }
-.mc-slot-card-other:hover {
-  opacity: 0.9;
-  border-color: rgba(255,255,255,0.1);
+
+/* "Partido confirmado" label */
+.mc-slot-assigned {
+  font-size: .85rem;
+  color: #6DBF7E;
+  padding: 6px 0 2px;
+  font-weight: 500;
 }
-.mc-slot-other-label {
+
+/* ── Section headers ── */
+.mc-section-header {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 2px;
+  color: var(--white-muted);
+  padding: 22px 0 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 14px;
+}
+.mc-section-header:first-child { padding-top: 4px; }
+.mc-section-league { margin-top: 8px; }
+
+/* ── Day-group (calendar section for other groups) ── */
+.mc-day-group {
+  margin-bottom: 14px;
+}
+.mc-day-header {
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--white-muted);
+  padding: 10px 0 6px;
+}
+
+/* ── Compact rows (other groups) ── */
+.mc-compact-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+}
+.mc-group-pill-sm {
+  font-size: .72rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--g, #C9A84C) 35%, transparent);
+  color: var(--g, #C9A84C);
+  background: color-mix(in srgb, var(--g, #C9A84C) 10%, transparent);
+  white-space: nowrap;
+}
+.mc-compact-loc {
+  flex: 1;
   font-size: .82rem;
   color: var(--white-muted);
-  padding: 8px 0 2px;
-  letter-spacing: .3px;
+  min-width: 80px;
 }
+.mc-compact-time {
+  font-size: .82rem;
+  color: var(--white-muted);
+  white-space: nowrap;
+}
+.mc-compact-status {
+  font-size: .78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.mc-compact-open    { color: #6DBF7E; }
+.mc-compact-partial { color: #E8C547; }
+.mc-compact-full    { color: var(--white-muted); }
 
 /* ---- Mobile tweaks ---- */
 @media (max-width: 480px) {

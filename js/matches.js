@@ -108,34 +108,36 @@ function renderMainSection() {
   loadMyMatches();
 }
 
-// ---- Load slots from ALL groups ----
+// ---- Load slots — own group first, then league calendar ----
 async function loadSlots() {
   document.getElementById('slotsLoading').style.display = 'flex';
   document.getElementById('slotsEmpty').style.display   = 'none';
   document.getElementById('slotsList').innerHTML        = '';
 
-  // Fetch ALL groups in parallel (everyone sees the full league schedule)
+  // Fetch ALL groups in parallel
   const groupKeys = Object.keys(GROUPS);
   const results   = await Promise.all(groupKeys.map(g => fetchSlotsFromSheet(g)));
 
-  // Flatten + tag with group, sort by date
   let allSlots = [];
   groupKeys.forEach((g, i) => {
     results[i].forEach(slot => allSlots.push({ ...slot, group: g }));
   });
   allSlots.sort((a, b) => a.slotKey.localeCompare(b.slotKey));
 
+  const mySlots    = allSlots.filter(s => s.group === currentPlayer.group_name);
+  const otherSlots = allSlots.filter(s => s.group !== currentPlayer.group_name);
+
   // Fetch my availability
   const { data: avail } = await _supabase
     .from('availability').select('slot_key').eq('player_id', currentPlayer.id);
   myAvailability = new Set((avail || []).map(a => a.slot_key));
 
-  // Fetch signup counts for all slots at once
-  const keys = allSlots.map(s => s.slotKey);
+  // Supabase signup counts for OWN group open slots only
   const countMap = {};
-  if (keys.length > 0) {
+  const openKeys = mySlots.filter(s => s.sheetPlayerCount < 4).map(s => s.slotKey);
+  if (openKeys.length > 0) {
     const { data: counts } = await _supabase
-      .from('availability').select('slot_key').in('slot_key', keys);
+      .from('availability').select('slot_key').in('slot_key', openKeys);
     (counts || []).forEach(c => { countMap[c.slot_key] = (countMap[c.slot_key] || 0) + 1; });
   }
 
@@ -146,53 +148,117 @@ async function loadSlots() {
   }
 
   const container = document.getElementById('slotsList');
-  allSlots.forEach(slot => {
-    const count     = countMap[slot.slotKey] || 0;
-    const signed    = myAvailability.has(slot.slotKey);
-    const grp       = GROUPS[slot.group] || { emoji:'🎾', label: slot.group, color:'#C9A84C' };
-    const isMyGroup = slot.group === currentPlayer.group_name;
-    container.appendChild(buildSlotCard(slot, count, signed, grp, isMyGroup));
-  });
-}
+  const myGrp = GROUPS[currentPlayer.group_name] || { emoji:'🎾', label: currentPlayer.group_name, color:'#C9A84C' };
 
-function buildSlotCard(slot, signedCount, isSigned, grp, isMyGroup) {
-  const card = document.createElement('div');
-  card.className = 'mc-slot-card fade-in' + (isMyGroup ? '' : ' mc-slot-card-other');
+  // ── SECTION 1: My group (big cards) ──────────────────────────
+  if (mySlots.length > 0) {
+    const sec = document.createElement('div');
+    sec.className = 'mc-section-header';
+    sec.innerHTML = `<span style="color:${myGrp.color}">${myGrp.emoji} ${myGrp.label}</span> — Tu grupo`;
+    container.appendChild(sec);
 
-  // Build 4 spots
-  let spotsHTML = '';
-  for (let i = 0; i < 4; i++) {
-    if (i < signedCount) {
-      spotsHTML += `<div class="mc-spot mc-spot-taken">🎾 Taken</div>`;
-    } else {
-      spotsHTML += `<div class="mc-spot mc-spot-free">🎾 Spot free</div>`;
-    }
+    mySlots.forEach(slot => {
+      const signupCount = countMap[slot.slotKey] || 0;
+      // Use sheet players if pre-assigned, otherwise Supabase signups
+      const takenCount  = slot.sheetPlayerCount > 0 ? slot.sheetPlayerCount : signupCount;
+      const signed      = myAvailability.has(slot.slotKey);
+      const isOpen      = slot.sheetPlayerCount < 4; // not fully assigned yet
+      container.appendChild(buildSlotCard(slot, takenCount, signed, myGrp, isOpen));
+    });
   }
 
-  // Action: join button for own group, read-only label for others
-  const actionHTML = isMyGroup
-    ? `<button class="mc-btn ${isSigned ? 'mc-btn-signed' : 'mc-btn-primary'} mc-join-btn"
-               data-slot-key="${slot.slotKey}" data-signed="${isSigned}">
-         ${isSigned ? '✓ You\'re in &nbsp;·&nbsp; Cancel' : 'Join this match'}
-       </button>`
-    : `<div class="mc-slot-other-label">👀 Other group — view only</div>`;
+  // ── SECTION 2: Other groups — compact calendar ────────────────
+  if (otherSlots.length > 0) {
+    const sec = document.createElement('div');
+    sec.className = 'mc-section-header mc-section-league';
+    sec.innerHTML = `🗓️ Otros partidos`;
+    container.appendChild(sec);
+
+    // Group other slots by date
+    const byDate = {};
+    otherSlots.forEach(s => {
+      if (!byDate[s.date]) byDate[s.date] = [];
+      byDate[s.date].push(s);
+    });
+
+    Object.entries(byDate).forEach(([date, slots]) => {
+      const dayWrap = document.createElement('div');
+      dayWrap.className = 'mc-day-group fade-in';
+
+      const dayHdr = document.createElement('div');
+      dayHdr.className = 'mc-day-header';
+      dayHdr.textContent = formatDate(date);
+      dayWrap.appendChild(dayHdr);
+
+      slots.forEach(slot => {
+        const grp = GROUPS[slot.group] || { emoji:'🎾', label: slot.group, color:'#C9A84C' };
+        dayWrap.appendChild(buildCompactRow(slot, grp));
+      });
+
+      container.appendChild(dayWrap);
+    });
+  }
+}
+
+// ── Full card — own group ─────────────────────────────────────────
+function buildSlotCard(slot, takenCount, isSigned, grp, isOpen) {
+  const card = document.createElement('div');
+  card.className = 'mc-slot-card fade-in';
+
+  let spotsHTML = '';
+  for (let i = 0; i < 4; i++) {
+    spotsHTML += i < takenCount
+      ? `<div class="mc-spot mc-spot-taken">🎾 Ocupado</div>`
+      : `<div class="mc-spot mc-spot-free">🎾 Libre</div>`;
+  }
+
+  let actionHTML = '';
+  if (isOpen) {
+    actionHTML = `<button class="mc-btn ${isSigned ? 'mc-btn-signed' : 'mc-btn-primary'} mc-join-btn"
+      data-slot-key="${slot.slotKey}" data-signed="${isSigned}">
+      ${isSigned ? '✓ Apuntado &nbsp;·&nbsp; Cancelar' : 'Apuntarme'}
+    </button>`;
+  } else {
+    actionHTML = `<div class="mc-slot-assigned">✅ Partido confirmado</div>`;
+  }
+
+  const timeStr = slot.time === 'TBD'
+    ? '<span class="mc-time-tbd">⏳ Hora por confirmar</span>'
+    : `<strong>${slot.time}</strong>`;
 
   card.innerHTML = `
     <div class="mc-slot-top">
       <span class="mc-slot-date">${formatDate(slot.date)}</span>
       <span class="mc-group-pill" style="--g:${grp.color}">${grp.emoji} ${grp.label}</span>
     </div>
-    <div class="mc-slot-time-loc">
-      ⏰ <strong>${slot.time}</strong> &nbsp;·&nbsp; 📍 ${slot.location}
-    </div>
+    <div class="mc-slot-time-loc">⏰ ${timeStr} &nbsp;·&nbsp; 📍 ${slot.location}</div>
     <div class="mc-spots">${spotsHTML}</div>
     ${actionHTML}
   `;
 
-  if (isMyGroup) {
+  if (isOpen) {
     card.querySelector('.mc-join-btn').addEventListener('click', () => toggleAvailability(slot.slotKey));
   }
   return card;
+}
+
+// ── Compact row — other groups calendar ──────────────────────────
+function buildCompactRow(slot, grp) {
+  const row = document.createElement('div');
+  row.className = 'mc-compact-row';
+
+  const free = 4 - slot.sheetPlayerCount;
+  const statusClass = free === 0 ? 'mc-compact-full' : free === 4 ? 'mc-compact-open' : 'mc-compact-partial';
+  const statusText  = free === 0 ? 'Lleno' : free === 4 ? '4 libres' : `${free} libres`;
+  const timeLabel   = slot.time === 'TBD' ? '⏳' : slot.time;
+
+  row.innerHTML = `
+    <span class="mc-group-pill mc-group-pill-sm" style="--g:${grp.color}">${grp.emoji} ${grp.label}</span>
+    <span class="mc-compact-loc">📍 ${slot.location}</span>
+    <span class="mc-compact-time">${timeLabel}</span>
+    <span class="mc-compact-status ${statusClass}">${statusText}</span>
+  `;
+  return row;
 }
 
 // ---- Toggle availability ----
