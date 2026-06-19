@@ -2028,179 +2028,166 @@ code.reg-code {
 }
 
 /* ============================================
-   PESTAÑA MI PERFIL
+   AVATAR BUTTON + PROFILE PANEL
    ============================================ */
 
-.mc-profile-card {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  background: var(--bg-card);
-  border: 1px solid rgba(201,168,76,0.2);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 16px;
-}
-.mc-profile-avatar {
-  width: 58px;
-  height: 58px;
+/* Botón circular con iniciales en la userbar */
+.mc-avatar-btn {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: rgba(var(--avatar-color, 201,168,76), 0.15);
-  border: 2px solid var(--avatar-color, var(--gold));
+  border: 2px solid var(--gold);
+  background: rgba(201,168,76,0.1);
+  color: var(--gold);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: .95rem;
+  letter-spacing: .04em;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.4rem;
-  color: var(--avatar-color, var(--gold));
+  transition: background var(--transition), transform var(--transition);
   flex-shrink: 0;
-  letter-spacing: .05em;
 }
-.mc-profile-info {
+.mc-avatar-btn:hover {
+  background: rgba(201,168,76,0.2);
+  transform: scale(1.05);
+}
+
+/* Panel de perfil — aparece debajo de la userbar */
+.mc-profile-panel {
+  background: var(--bg-card);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 12px;
+  padding: 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+  animation: panelFadeIn .2s ease;
+}
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Cabecera del panel */
+.mcp-header {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
-.mc-profile-name {
+.mcp-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: rgba(201,168,76,0.1);
+  color: var(--gold);
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.35rem;
+  font-size: 1.3rem;
+  letter-spacing: .04em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mcp-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.25rem;
   letter-spacing: .06em;
   color: var(--white);
+  line-height: 1.1;
 }
-.mc-profile-group {
-  font-size: .88rem;
+.mcp-group {
+  font-size: .82rem;
   font-weight: 600;
-}
-.mc-profile-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
   margin-top: 2px;
 }
-.mc-profile-badge {
-  font-size: .72rem;
-  font-weight: 600;
-  padding: 3px 9px;
-  border-radius: 20px;
-  background: rgba(255,255,255,0.07);
-  color: var(--white-muted);
-  letter-spacing: .04em;
-}
-.mc-profile-badge-pay {
-  background: rgba(201,168,76,0.12);
-  color: var(--gold);
-}
 
-/* Section blocks */
-.mc-profile-section {
-  background: var(--bg-card);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 12px;
-  padding: 18px 20px;
-  margin-bottom: 14px;
-}
-.mc-profile-section-title {
-  font-size: .8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .1em;
-  color: var(--white-muted);
-  margin-bottom: 14px;
-}
-
-/* Stats grid */
-.mc-stats-grid {
+/* Stats row */
+.mcp-stats {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
-@media (max-width: 500px) {
-  .mc-stats-grid { grid-template-columns: repeat(3, 1fr); }
+.mcp-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 8px;
+  gap: 4px;
+  border-right: 1px solid rgba(255,255,255,0.06);
 }
-.mc-stat-box {
-  background: rgba(255,255,255,0.04);
-  border-radius: 8px;
-  padding: 12px 8px;
-  text-align: center;
-}
-.mc-stat-value {
+.mcp-stat:last-child { border-right: none; }
+.mcp-stat-val {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   letter-spacing: .04em;
   color: var(--white);
   line-height: 1;
-  margin-bottom: 4px;
 }
-.mc-stat-label {
-  font-size: .68rem;
+.mcp-stat-lbl {
+  font-size: .65rem;
   text-transform: uppercase;
   letter-spacing: .08em;
   color: var(--white-muted);
 }
-.mc-stat-win  .mc-stat-value { color: #6DBF7E; }
-.mc-stat-loss .mc-stat-value { color: #e05555; }
-.mc-stat-pts  .mc-stat-value { color: var(--gold); }
-.mc-stat-rating .mc-stat-value { color: var(--gold); }
+.mcp-val-w   { color: #6DBF7E; }
+.mcp-val-l   { color: #e05555; }
+.mcp-val-pts { color: var(--gold); }
 
-/* Referral in profile */
-.mc-profile-referral-box {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* Info rows */
+.mcp-section {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
-.mc-profile-referral-row {
+.mcp-section:last-child { border-bottom: none; }
+.mcp-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   gap: 12px;
+  padding: 11px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
 }
-.mc-profile-referral-label {
-  font-size: .82rem;
+.mcp-row:last-child { border-bottom: none; }
+.mcp-lbl {
+  font-size: .8rem;
   color: var(--white-muted);
   flex-shrink: 0;
 }
-.mc-profile-referral-code-wrap {
+.mcp-val {
+  font-size: .85rem;
+  color: var(--white);
+  font-weight: 500;
+  text-align: right;
+  word-break: break-all;
+}
+
+/* Referral code in profile panel */
+.mcp-ref-wrap {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.mc-profile-referral-earned {
-  font-size: .9rem;
-  font-weight: 600;
+.mcp-ref-code {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: .12em;
   color: var(--gold);
 }
-.mc-profile-referral-hint {
-  font-size: .78rem;
-  color: var(--white-muted);
-  line-height: 1.5;
-  margin-top: 2px;
+.mcp-ref-copy {
+  font-size: .72rem;
+  padding: 3px 9px;
+  border-radius: 4px;
+  border: 1px solid rgba(201,168,76,0.4);
+  background: rgba(201,168,76,0.08);
+  color: var(--gold);
+  cursor: pointer;
+  transition: background var(--transition);
 }
-
-/* Personal data rows */
-.mc-profile-data-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.mc-profile-data-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-.mc-profile-data-row:last-child { border-bottom: none; padding-bottom: 0; }
-.mc-profile-data-label {
-  font-size: .82rem;
-  color: var(--white-muted);
-}
-.mc-profile-data-value {
-  font-size: .88rem;
-  color: var(--white);
-  font-weight: 500;
-  text-align: right;
-}
+.mcp-ref-copy:hover { background: rgba(201,168,76,0.18); }
 
 /* ============================================
    MODAL DE RESULTADO

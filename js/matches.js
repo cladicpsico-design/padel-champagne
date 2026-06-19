@@ -92,6 +92,13 @@ function renderMainSection() {
 
   if (currentPlayer.is_admin) document.getElementById('adminLink').style.display = 'inline-flex';
 
+  // Iniciales en el botón de avatar
+  const initials = currentPlayer.name.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  const avatarBtn = document.getElementById('profileToggleBtn');
+  avatarBtn.textContent = initials;
+  avatarBtn.style.borderColor = grp.color;
+  avatarBtn.style.color       = grp.color;
+
   // Banner de código de referido
   if (currentPlayer.referral_code) {
     const refBar = document.getElementById('referralBar');
@@ -119,9 +126,11 @@ function renderMainSection() {
       document.getElementById(panelId).style.display = 'block';
       if (tab.dataset.tab === 'mymatch') loadMyMatches();
       if (tab.dataset.tab === 'slots')   loadSlots();
-      if (tab.dataset.tab === 'perfil')  loadProfile();
     });
   });
+
+  // Avatar button → toggle profile panel
+  document.getElementById('profileToggleBtn').addEventListener('click', toggleProfilePanel);
 
   loadSlots();
   loadMyMatches();
@@ -685,98 +694,77 @@ function showModalMsg(text, type) {
   el.style.display = 'block';
 }
 
-// ── Profile tab ────────────────────────────────────────────────
+// ── Profile panel ──────────────────────────────────────────────
 
 const SEASON_LABELS_PROFILE = {
-  'founder':  '🏆 T1 2025 (Founder)',
+  'founder':  'T1 2025 · Founder',
   't2_2025':  'T2 2025',
   't3_2025':  'T3 2025',
   't4_2025':  'T4 2025',
   't1_2026':  'T1 2026',
   't2_2026':  'T2 2026',
-  'new':      'Nueva incorporación',
+  'new':      'Nuevo jugador',
 };
 
-async function loadProfile() {
-  document.getElementById('profileLoading').style.display = 'flex';
-  document.getElementById('profileContent').style.display = 'none';
+let profileLoaded = false;
 
+function toggleProfilePanel() {
+  const panel = document.getElementById('profilePanel');
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen && !profileLoaded) renderProfilePanel();
+}
+
+async function renderProfilePanel() {
   const p   = currentPlayer;
   const grp = GROUPS[p.group_name] || { emoji: '🎾', label: p.group_name, color: '#C9A84C' };
 
-  // ── Cabecera del jugador ──
+  // Avatar iniciales
   const initials = p.name.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  document.getElementById('profileAvatar').textContent = initials;
-  document.getElementById('profileAvatar').style.setProperty('--avatar-color', grp.color);
-  document.getElementById('profileName').textContent  = p.name;
-  document.getElementById('profileGroup').innerHTML   =
-    `<span style="color:${grp.color}">${grp.emoji} ${grp.label}</span>`;
+  const avatarEl = document.getElementById('mcpAvatar');
+  avatarEl.textContent = initials;
+  avatarEl.style.background = grp.color + '22';
+  avatarEl.style.borderColor = grp.color;
+  avatarEl.style.color = grp.color;
 
-  // Temporada y pago
-  const seasonLabel = SEASON_LABELS_PROFILE[p.season_start] || '—';
-  const payLabel    = p.payment_status === 'paid'   ? '💳 Pagado'
-                    : p.payment_status === 'exempt' ? '✅ Exento'
-                    : '⏳ Pendiente de pago';
-  document.getElementById('profileMeta').innerHTML =
-    `<span class="mc-profile-badge">${seasonLabel}</span>` +
-    `<span class="mc-profile-badge mc-profile-badge-pay">${payLabel}</span>`;
+  document.getElementById('mcpName').textContent  = p.name;
+  document.getElementById('mcpGroup').innerHTML   = `${grp.emoji} ${grp.label}`;
+  document.getElementById('mcpGroup').style.color = grp.color;
 
-  // ── Estadísticas desde Supabase ──
-  try {
-    const { data: standings } = await _supabase
-      .rpc('get_group_standings', { p_group: p.group_name });
-    const myStats = (standings || []).find(s => s.player_id === p.id);
-    if (myStats) {
-      document.getElementById('statPJ').textContent     = myStats.pj;
-      document.getElementById('statW').textContent      = myStats.ganados;
-      document.getElementById('statL').textContent      = myStats.perdidos;
-      document.getElementById('statPts').textContent    = myStats.pts;
-      document.getElementById('statRating').textContent = Number(myStats.rating).toFixed(2);
-    } else {
-      ['statPJ','statW','statL','statPts','statRating'].forEach(id => {
-        document.getElementById(id).textContent = '0';
-      });
-    }
-  } catch (_) {
-    ['statPJ','statW','statL','statPts','statRating'].forEach(id => {
-      document.getElementById(id).textContent = '—';
-    });
-  }
+  // Datos de cuenta
+  document.getElementById('mcpEmail').textContent  = p.email || '—';
+  document.getElementById('mcpPhone').textContent  = p.phone || '—';
+  document.getElementById('mcpSeason').textContent = SEASON_LABELS_PROFILE[p.season_start] || '—';
+  document.getElementById('mcpStatus').textContent =
+    p.payment_status === 'paid'   ? '✅ Pagado'  :
+    p.payment_status === 'exempt' ? '✅ Exento'  : '⏳ Pendiente';
 
-  // ── Referidos ──
+  // Código de referido
   if (p.referral_code) {
-    document.getElementById('profileReferralSection').style.display = '';
-    document.getElementById('profileReferralCode').textContent = p.referral_code;
-    const earned = p.referral_discount_earned || 0;
-    document.getElementById('profileReferralEarned').textContent =
-      earned > 0 ? `€${earned} 🎁` : '€0 — ¡comparte tu código!';
+    document.getElementById('mcpRefSection').style.display = '';
+    document.getElementById('mcpRefCode').textContent = p.referral_code;
+    document.getElementById('mcpRefEarned').textContent =
+      `€${p.referral_discount_earned || 0}`;
+    document.getElementById('mcpRefCopyBtn').onclick = () => {
+      navigator.clipboard.writeText(p.referral_code).then(() => {
+        const btn = document.getElementById('mcpRefCopyBtn');
+        btn.textContent = '✓';
+        setTimeout(() => { btn.textContent = 'Copiar'; }, 2000);
+      });
+    };
   }
 
-  // ── Datos personales ──
-  const items = [
-    { label: '📧 Email',    value: p.email          || '—' },
-    { label: '📱 Teléfono', value: p.phone          || '—' },
-    { label: '🎂 Fecha de nacimiento', value: p.date_of_birth
-        ? new Date(p.date_of_birth).toLocaleDateString('es-ES') : '—' },
-  ];
-  document.getElementById('profileDataList').innerHTML = items.map(item => `
-    <div class="mc-profile-data-row">
-      <span class="mc-profile-data-label">${item.label}</span>
-      <span class="mc-profile-data-value">${item.value}</span>
-    </div>
-  `).join('');
+  // Stats desde Supabase
+  try {
+    const { data } = await _supabase.rpc('get_group_standings', { p_group: p.group_name });
+    const s = (data || []).find(r => r.player_id === p.id);
+    document.getElementById('mcpPJ').textContent  = s ? s.pj      : '0';
+    document.getElementById('mcpW').textContent   = s ? s.ganados  : '0';
+    document.getElementById('mcpL').textContent   = s ? s.perdidos : '0';
+    document.getElementById('mcpPts').textContent = s ? s.pts      : '0';
+  } catch (_) {}
 
-  document.getElementById('profileLoading').style.display = 'none';
-  document.getElementById('profileContent').style.display = '';
-}
-
-function copyProfileCode() {
-  const code = document.getElementById('profileReferralCode').textContent;
-  const btn  = document.querySelector('.mc-profile-referral-code-wrap .mc-referral-copy');
-  navigator.clipboard.writeText(code).then(() => {
-    btn.textContent = '✓ Copiado';
-    setTimeout(() => { btn.textContent = 'Copiar'; }, 2000);
-  });
+  profileLoaded = true;
 }
 
 // ── Referral code copy ─────────────────────────────────────────
