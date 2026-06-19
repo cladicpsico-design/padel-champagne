@@ -2028,109 +2028,83 @@ code.reg-code {
 }
 
 /* ============================================
-   AVATAR BUTTON + PROFILE PANEL
+   PÁGINA DE PERFIL (profile.html)
    ============================================ */
 
-/* Botón circular con iniciales en la userbar */
-.mc-avatar-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 2px solid var(--gold);
-  background: rgba(201,168,76,0.1);
-  color: var(--gold);
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: .95rem;
-  letter-spacing: .04em;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background var(--transition), transform var(--transition);
-  flex-shrink: 0;
+.profile-page-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 24px;
+  align-items: start;
+  max-width: 720px;
+  margin: 0 auto;
 }
-.mc-avatar-btn:hover {
-  background: rgba(201,168,76,0.2);
-  transform: scale(1.05);
+@media (max-width: 600px) {
+  .profile-page-layout { grid-template-columns: 1fr; }
 }
 
-/* Panel de perfil — aparece debajo de la userbar */
-.mc-profile-panel {
+.profile-avatar-card {
   background: var(--bg-card);
-  border: 1px solid rgba(201,168,76,0.2);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 12px;
-  padding: 0;
-  margin-bottom: 20px;
-  overflow: hidden;
-  animation: panelFadeIn .2s ease;
-}
-@keyframes panelFadeIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Cabecera del panel */
-.mcp-header {
+  padding: 28px 20px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
-  padding: 20px 20px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  gap: 10px;
+  text-align: center;
 }
-.mcp-avatar {
-  width: 50px;
-  height: 50px;
+.profile-avatar-circle {
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   border: 2px solid var(--gold);
   background: rgba(201,168,76,0.1);
   color: var(--gold);
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.3rem;
-  letter-spacing: .04em;
+  font-size: 1.7rem;
+  letter-spacing: .05em;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  margin-bottom: 4px;
 }
-.mcp-name {
+.profile-avatar-name {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   letter-spacing: .06em;
   color: var(--white);
-  line-height: 1.1;
 }
-.mcp-group {
-  font-size: .82rem;
+.profile-avatar-group {
+  font-size: .85rem;
   font-weight: 600;
-  margin-top: 2px;
+}
+.profile-signout-btn {
+  margin-top: 12px;
+  width: 100%;
+  font-size: .82rem;
+  padding: 8px 12px;
 }
 
-/* Formulario del panel de perfil */
-.mcp-form {
-  padding: 18px 20px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+.profile-form-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 28px 24px;
 }
-.mcp-field {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+
+/* Icono de perfil en navbar */
+.navbar-link-profile {
+  font-size: 1rem;
+  opacity: .75;
+  transition: opacity var(--transition);
 }
-.mcp-lbl {
-  font-size: .75rem;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  color: var(--white-muted);
-  font-weight: 600;
-}
-.mcp-input {
-  font-size: .9rem !important;
-  padding: 10px 12px !important;
-}
-.mcp-save-btn {
-  margin-top: 4px;
-  width: 100%;
+.navbar-link-profile:hover { opacity: 1; }
+
+/* Enlace de perfil en userbar de matches */
+.mc-profile-link {
+  font-size: 1rem;
+  padding: 6px 10px !important;
 }
 
 /* ============================================

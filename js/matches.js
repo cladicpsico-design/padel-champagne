@@ -92,12 +92,6 @@ function renderMainSection() {
 
   if (currentPlayer.is_admin) document.getElementById('adminLink').style.display = 'inline-flex';
 
-  // Iniciales en el botón de avatar
-  const initials = currentPlayer.name.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  const avatarBtn = document.getElementById('profileToggleBtn');
-  avatarBtn.textContent = initials;
-  avatarBtn.style.borderColor = grp.color;
-  avatarBtn.style.color       = grp.color;
 
   // Banner de código de referido
   if (currentPlayer.referral_code) {
@@ -129,8 +123,6 @@ function renderMainSection() {
     });
   });
 
-  // Avatar button → toggle profile panel
-  document.getElementById('profileToggleBtn').addEventListener('click', toggleProfilePanel);
 
   loadSlots();
   loadMyMatches();
@@ -692,86 +684,6 @@ function showModalMsg(text, type) {
   el.textContent = text;
   el.className   = 'mc-msg mc-msg-' + type;
   el.style.display = 'block';
-}
-
-// ── Profile panel ──────────────────────────────────────────────
-
-const SEASON_LABELS_PROFILE = {
-  'founder':  'T1 2025 · Founder',
-  't2_2025':  'T2 2025',
-  't3_2025':  'T3 2025',
-  't4_2025':  'T4 2025',
-  't1_2026':  'T1 2026',
-  't2_2026':  'T2 2026',
-  'new':      'Nuevo jugador',
-};
-
-let profileLoaded = false;
-
-function toggleProfilePanel() {
-  const panel = document.getElementById('profilePanel');
-  const isOpen = panel.style.display !== 'none';
-  panel.style.display = isOpen ? 'none' : 'block';
-  if (!isOpen && !profileLoaded) renderProfilePanel();
-}
-
-function renderProfilePanel() {
-  const p   = currentPlayer;
-  const grp = GROUPS[p.group_name] || { emoji: '🎾', label: p.group_name, color: '#C9A84C' };
-
-  // Avatar
-  const initials = p.name.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  const avatarEl = document.getElementById('mcpAvatar');
-  avatarEl.textContent   = initials;
-  avatarEl.style.background   = grp.color + '22';
-  avatarEl.style.borderColor  = grp.color;
-  avatarEl.style.color        = grp.color;
-
-  document.getElementById('mcpName').textContent  = p.name;
-  document.getElementById('mcpGroup').innerHTML   = `${grp.emoji} ${grp.label}`;
-  document.getElementById('mcpGroup').style.color = grp.color;
-
-  // Rellena los campos editables
-  document.getElementById('mcpInputName').value  = p.name  || '';
-  document.getElementById('mcpInputEmail').value = p.email || '';
-  document.getElementById('mcpInputDob').value   = p.date_of_birth || '';
-
-  // Formulario de guardado
-  document.getElementById('mcpForm').onsubmit = async (e) => {
-    e.preventDefault();
-    const newName  = document.getElementById('mcpInputName').value.trim();
-    const newEmail = document.getElementById('mcpInputEmail').value.trim().toLowerCase();
-    const newDob   = document.getElementById('mcpInputDob').value || null;
-    const btn      = e.submitter;
-    const msg      = document.getElementById('mcpSaveMsg');
-
-    if (!newName || !newEmail) return;
-    btn.disabled = true; btn.textContent = 'Guardando…';
-
-    const { error } = await _supabase.from('players')
-      .update({ name: newName, email: newEmail, date_of_birth: newDob })
-      .eq('id', p.id);
-
-    if (error) {
-      msg.textContent = '❌ Error al guardar.';
-      msg.className   = 'mc-msg mc-msg-error';
-    } else {
-      currentPlayer.name          = newName;
-      currentPlayer.email         = newEmail;
-      currentPlayer.date_of_birth = newDob;
-      document.getElementById('mcpName').textContent        = newName;
-      document.getElementById('userGreeting').textContent   = '¡Hola, ' + newName + '!';
-      document.getElementById('profileToggleBtn').textContent =
-        newName.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-      msg.textContent = '✅ Guardado';
-      msg.className   = 'mc-msg mc-msg-success';
-    }
-    msg.style.display = 'block';
-    btn.disabled = false; btn.textContent = 'Guardar cambios';
-    setTimeout(() => { msg.style.display = 'none'; }, 3000);
-  };
-
-  profileLoaded = true;
 }
 
 // ── Referral code copy ─────────────────────────────────────────

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi perfil — Padel Champagne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Lora:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DED6T6CSLQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DED6T6CSLQ');
+  </script>
+</head>
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-logo">
+        <img src="assets/logo.png" alt="Padel Champagne" class="navbar-logo-img">
+        <span>PADEL CHAMPAGNE</span>
+      </a>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="navbar-menu" id="navbarMenu">
+        <li><a href="index.html"     class="navbar-link">Home</a></li>
+        <li><a href="league.html"    class="navbar-link">League</a></li>
+        <li><a href="standings.html" class="navbar-link">Standings</a></li>
+        <li><a href="matches.html"   class="navbar-link">Matches</a></li>
+        <li><a href="events.html"    class="navbar-link">Events</a></li>
+        <li><a href="register.html"  class="navbar-link navbar-link-cta">Register</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ========== PAGE TABS ========== -->
+  <div class="page-tabs">
+    <a href="index.html"     class="page-tab">Home</a>
+    <a href="league.html"    class="page-tab">League</a>
+    <a href="standings.html" class="page-tab">Standings</a>
+    <a href="matches.html"   class="page-tab">Matches</a>
+    <a href="events.html"    class="page-tab">Events</a>
+    <a href="register.html"  class="page-tab page-tab-cta">Register</a>
+  </div>
+
+  <!-- ========== HERO ========== -->
+  <section class="page-hero">
+    <div class="container">
+      <h1 class="page-hero-title">MI PERFIL</h1>
+      <p class="page-hero-subtitle" id="profileHeroSub">Cargando…</p>
+    </div>
+  </section>
+
+  <!-- ========== NOT LOGGED IN ========== -->
+  <section class="section" id="notLoggedSection" style="display:none;">
+    <div class="container">
+      <div class="mc-card mc-card-center fade-in">
+        <div class="mc-card-icon">🔒</div>
+        <h3 class="mc-card-title">Inicia sesión para ver tu perfil</h3>
+        <p class="mc-card-desc">Accede a tu cuenta desde la página de partidos.</p>
+        <a href="matches.html" class="mc-btn mc-btn-primary" style="margin-top:8px;display:inline-flex;">
+          Ir a Matches →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PROFILE CONTENT ========== -->
+  <section class="section" id="profileSection" style="display:none;">
+    <div class="container">
+      <div class="profile-page-layout">
+
+        <!-- Avatar card -->
+        <div class="profile-avatar-card fade-in">
+          <div class="profile-avatar-circle" id="profileAvatarCircle"></div>
+          <div class="profile-avatar-name" id="profileAvatarName"></div>
+          <div class="profile-avatar-group" id="profileAvatarGroup"></div>
+          <button class="mc-btn mc-btn-ghost profile-signout-btn" id="profileSignOutBtn">Cerrar sesión</button>
+        </div>
+
+        <!-- Edit form -->
+        <div class="profile-form-card fade-in">
+          <h3 class="mc-card-title" style="margin-bottom:6px;">Datos de la cuenta</h3>
+          <p class="mc-card-desc" style="margin-bottom:20px;">Actualiza tu información personal.</p>
+
+          <form id="profileEditForm" class="mc-form" novalidate>
+            <div class="reg-field">
+              <label class="reg-label" for="pfName">Nombre</label>
+              <input type="text" id="pfName" class="mc-input" maxlength="80" autocomplete="name">
+            </div>
+            <div class="reg-field">
+              <label class="reg-label" for="pfEmail">Email</label>
+              <input type="email" id="pfEmail" class="mc-input" autocomplete="email">
+            </div>
+            <div class="reg-field">
+              <label class="reg-label" for="pfDob">Fecha de nacimiento</label>
+              <input type="date" id="pfDob" class="mc-input">
+            </div>
+            <div id="profileSaveMsg" class="mc-msg" style="display:none;"></div>
+            <button type="submit" class="mc-btn mc-btn-primary" id="profileSaveBtn">
+              Guardar cambios
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <img src="assets/logo.png" alt="Padel Champagne" class="footer-logo">
+        <p>Padel Champagne League</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js?v=10"></script>
+  <script src="js/main.js"></script>
+  <script src="js/profile.js?v=1"></script>
+</body>
+</html>

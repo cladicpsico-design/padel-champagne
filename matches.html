@@ -37,6 +37,7 @@
         <li><a href="matches.html"   class="navbar-link active">Matches</a></li>
         <li><a href="events.html"    class="navbar-link">Events</a></li>
         <li><a href="register.html" class="navbar-link navbar-link-cta">Register</a></li>
+        <li><a href="profile.html"  class="navbar-link navbar-link-profile">👤</a></li>
       </ul>
     </div>
   </nav>
@@ -111,37 +112,9 @@
         </div>
         <div class="mc-userbar-right">
           <a href="admin.html" class="mc-btn mc-btn-ghost mc-admin-btn" id="adminLink" style="display:none;">⚙️ Admin</a>
-          <button class="mc-avatar-btn" id="profileToggleBtn" title="Mi cuenta"></button>
+          <a href="profile.html" class="mc-btn mc-btn-ghost mc-profile-link" id="profileLink" title="Mi perfil">👤</a>
           <button class="mc-btn mc-btn-ghost" id="signOutBtn">Salir</button>
         </div>
-      </div>
-
-      <!-- Profile panel (hidden by default) -->
-      <div id="profilePanel" class="mc-profile-panel" style="display:none;">
-        <div class="mcp-header">
-          <div class="mcp-avatar" id="mcpAvatar"></div>
-          <div>
-            <div class="mcp-name" id="mcpName"></div>
-            <div class="mcp-group" id="mcpGroup"></div>
-          </div>
-        </div>
-
-        <form class="mcp-form" id="mcpForm">
-          <div class="mcp-field">
-            <label class="mcp-lbl">Nombre</label>
-            <input type="text" id="mcpInputName" class="mc-input mcp-input" maxlength="80" autocomplete="name">
-          </div>
-          <div class="mcp-field">
-            <label class="mcp-lbl">Email</label>
-            <input type="email" id="mcpInputEmail" class="mc-input mcp-input" autocomplete="email">
-          </div>
-          <div class="mcp-field">
-            <label class="mcp-lbl">Fecha de nacimiento</label>
-            <input type="date" id="mcpInputDob" class="mc-input mcp-input">
-          </div>
-          <div id="mcpSaveMsg" class="mc-msg" style="display:none;"></div>
-          <button type="submit" class="mc-btn mc-btn-primary mcp-save-btn">Guardar cambios</button>
-        </form>
       </div>
 
       <!-- Referral code banner -->
