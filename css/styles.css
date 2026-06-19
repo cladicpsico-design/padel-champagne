@@ -2028,6 +2028,181 @@ code.reg-code {
 }
 
 /* ============================================
+   PESTAÑA MI PERFIL
+   ============================================ */
+
+.mc-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--bg-card);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.mc-profile-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(var(--avatar-color, 201,168,76), 0.15);
+  border: 2px solid var(--avatar-color, var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  color: var(--avatar-color, var(--gold));
+  flex-shrink: 0;
+  letter-spacing: .05em;
+}
+.mc-profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.mc-profile-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: .06em;
+  color: var(--white);
+}
+.mc-profile-group {
+  font-size: .88rem;
+  font-weight: 600;
+}
+.mc-profile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+.mc-profile-badge {
+  font-size: .72rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.07);
+  color: var(--white-muted);
+  letter-spacing: .04em;
+}
+.mc-profile-badge-pay {
+  background: rgba(201,168,76,0.12);
+  color: var(--gold);
+}
+
+/* Section blocks */
+.mc-profile-section {
+  background: var(--bg-card);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+.mc-profile-section-title {
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--white-muted);
+  margin-bottom: 14px;
+}
+
+/* Stats grid */
+.mc-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+@media (max-width: 500px) {
+  .mc-stats-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.mc-stat-box {
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px;
+  padding: 12px 8px;
+  text-align: center;
+}
+.mc-stat-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: .04em;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.mc-stat-label {
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--white-muted);
+}
+.mc-stat-win  .mc-stat-value { color: #6DBF7E; }
+.mc-stat-loss .mc-stat-value { color: #e05555; }
+.mc-stat-pts  .mc-stat-value { color: var(--gold); }
+.mc-stat-rating .mc-stat-value { color: var(--gold); }
+
+/* Referral in profile */
+.mc-profile-referral-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mc-profile-referral-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.mc-profile-referral-label {
+  font-size: .82rem;
+  color: var(--white-muted);
+  flex-shrink: 0;
+}
+.mc-profile-referral-code-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mc-profile-referral-earned {
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+.mc-profile-referral-hint {
+  font-size: .78rem;
+  color: var(--white-muted);
+  line-height: 1.5;
+  margin-top: 2px;
+}
+
+/* Personal data rows */
+.mc-profile-data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mc-profile-data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.mc-profile-data-row:last-child { border-bottom: none; padding-bottom: 0; }
+.mc-profile-data-label {
+  font-size: .82rem;
+  color: var(--white-muted);
+}
+.mc-profile-data-value {
+  font-size: .88rem;
+  color: var(--white);
+  font-weight: 500;
+  text-align: right;
+}
+
+/* ============================================
    MODAL DE RESULTADO
    ============================================ */
 

@@ -127,17 +127,18 @@
 
       <!-- Content tabs -->
       <div class="mc-tabs fade-in">
-        <button class="mc-tab active" data-tab="slots">📅 Available slots</button>
-        <button class="mc-tab"        data-tab="mymatch">🎯 My matches</button>
+        <button class="mc-tab active" data-tab="slots">📅 Slots</button>
+        <button class="mc-tab"        data-tab="mymatch">🎯 Mis partidos</button>
+        <button class="mc-tab"        data-tab="perfil">👤 Mi perfil</button>
       </div>
 
       <!-- ---- SLOTS TAB ---- -->
       <div id="tabSlots" class="mc-tab-panel">
         <div id="slotsLoading" class="mc-loading">
-          <div class="mc-spinner"></div> Loading slots…
+          <div class="mc-spinner"></div> Cargando slots…
         </div>
         <div id="slotsEmpty" class="mc-empty" style="display:none;">
-          <p>🎾 No upcoming slots in any group right now.<br>Check back soon!</p>
+          <p>🎾 No hay slots próximos en ningún grupo.<br>¡Vuelve pronto!</p>
         </div>
         <div id="slotsList"></div>
       </div>
@@ -145,12 +146,84 @@
       <!-- ---- MY MATCHES TAB ---- -->
       <div id="tabMymatch" class="mc-tab-panel" style="display:none;">
         <div id="matchesLoading" class="mc-loading">
-          <div class="mc-spinner"></div> Loading matches…
+          <div class="mc-spinner"></div> Cargando partidos…
         </div>
         <div id="matchesEmpty" class="mc-empty" style="display:none;">
-          <p>🎾 No matches assigned yet.<br>Sign up for a slot to get started!</p>
+          <p>🎾 Todavía no tienes partidos asignados.<br>¡Apúntate a un slot para empezar!</p>
         </div>
         <div id="matchesList"></div>
+      </div>
+
+      <!-- ---- PROFILE TAB ---- -->
+      <div id="tabPerfil" class="mc-tab-panel" style="display:none;">
+        <div id="profileLoading" class="mc-loading">
+          <div class="mc-spinner"></div> Cargando perfil…
+        </div>
+        <div id="profileContent" style="display:none;">
+
+          <!-- Player card -->
+          <div class="mc-profile-card fade-in">
+            <div class="mc-profile-avatar" id="profileAvatar"></div>
+            <div class="mc-profile-info">
+              <div class="mc-profile-name" id="profileName"></div>
+              <div class="mc-profile-group" id="profileGroup"></div>
+              <div class="mc-profile-meta" id="profileMeta"></div>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="mc-profile-section fade-in">
+            <div class="mc-profile-section-title">📊 Estadísticas</div>
+            <div class="mc-stats-grid">
+              <div class="mc-stat-box">
+                <div class="mc-stat-value" id="statPJ">—</div>
+                <div class="mc-stat-label">Partidos</div>
+              </div>
+              <div class="mc-stat-box mc-stat-win">
+                <div class="mc-stat-value" id="statW">—</div>
+                <div class="mc-stat-label">Victorias</div>
+              </div>
+              <div class="mc-stat-box mc-stat-loss">
+                <div class="mc-stat-value" id="statL">—</div>
+                <div class="mc-stat-label">Derrotas</div>
+              </div>
+              <div class="mc-stat-box mc-stat-pts">
+                <div class="mc-stat-value" id="statPts">—</div>
+                <div class="mc-stat-label">Puntos</div>
+              </div>
+              <div class="mc-stat-box mc-stat-rating">
+                <div class="mc-stat-value" id="statRating">—</div>
+                <div class="mc-stat-label">Rating</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Referral -->
+          <div class="mc-profile-section fade-in" id="profileReferralSection" style="display:none;">
+            <div class="mc-profile-section-title">🎁 Referidos</div>
+            <div class="mc-profile-referral-box">
+              <div class="mc-profile-referral-row">
+                <span class="mc-profile-referral-label">Tu código</span>
+                <div class="mc-profile-referral-code-wrap">
+                  <span class="mc-referral-code" id="profileReferralCode"></span>
+                  <button class="mc-referral-copy" onclick="copyProfileCode()">Copiar</button>
+                </div>
+              </div>
+              <div class="mc-profile-referral-row">
+                <span class="mc-profile-referral-label">Créditos ganados</span>
+                <span class="mc-profile-referral-earned" id="profileReferralEarned"></span>
+              </div>
+              <p class="mc-profile-referral-hint">Por cada amigo que se apunte con tu código ganas €10 de descuento en la próxima temporada.</p>
+            </div>
+          </div>
+
+          <!-- Personal data -->
+          <div class="mc-profile-section fade-in">
+            <div class="mc-profile-section-title">📋 Datos personales</div>
+            <div class="mc-profile-data-list" id="profileDataList"></div>
+          </div>
+
+        </div>
       </div>
 
     </div>
