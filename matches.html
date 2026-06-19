@@ -126,30 +126,22 @@
           </div>
         </div>
 
-        <div class="mcp-stats" id="mcpStats">
-          <div class="mcp-stat"><span class="mcp-stat-val" id="mcpPJ">—</span><span class="mcp-stat-lbl">Partidos</span></div>
-          <div class="mcp-stat"><span class="mcp-stat-val mcp-val-w" id="mcpW">—</span><span class="mcp-stat-lbl">Victorias</span></div>
-          <div class="mcp-stat"><span class="mcp-stat-val mcp-val-l" id="mcpL">—</span><span class="mcp-stat-lbl">Derrotas</span></div>
-          <div class="mcp-stat"><span class="mcp-stat-val mcp-val-pts" id="mcpPts">—</span><span class="mcp-stat-lbl">Pts</span></div>
-        </div>
-
-        <div class="mcp-section">
-          <div class="mcp-row"><span class="mcp-lbl">Email</span><span class="mcp-val" id="mcpEmail">—</span></div>
-          <div class="mcp-row"><span class="mcp-lbl">Teléfono</span><span class="mcp-val" id="mcpPhone">—</span></div>
-          <div class="mcp-row"><span class="mcp-lbl">Temporada</span><span class="mcp-val" id="mcpSeason">—</span></div>
-          <div class="mcp-row"><span class="mcp-lbl">Estado</span><span class="mcp-val" id="mcpStatus">—</span></div>
-        </div>
-
-        <div class="mcp-section" id="mcpRefSection" style="display:none;">
-          <div class="mcp-row">
-            <span class="mcp-lbl">Código referido</span>
-            <div class="mcp-ref-wrap">
-              <span class="mcp-ref-code" id="mcpRefCode"></span>
-              <button class="mcp-ref-copy" id="mcpRefCopyBtn">Copiar</button>
-            </div>
+        <form class="mcp-form" id="mcpForm">
+          <div class="mcp-field">
+            <label class="mcp-lbl">Nombre</label>
+            <input type="text" id="mcpInputName" class="mc-input mcp-input" maxlength="80" autocomplete="name">
           </div>
-          <div class="mcp-row"><span class="mcp-lbl">Créditos ganados</span><span class="mcp-val mcp-val-pts" id="mcpRefEarned">€0</span></div>
-        </div>
+          <div class="mcp-field">
+            <label class="mcp-lbl">Email</label>
+            <input type="email" id="mcpInputEmail" class="mc-input mcp-input" autocomplete="email">
+          </div>
+          <div class="mcp-field">
+            <label class="mcp-lbl">Fecha de nacimiento</label>
+            <input type="date" id="mcpInputDob" class="mc-input mcp-input">
+          </div>
+          <div id="mcpSaveMsg" class="mc-msg" style="display:none;"></div>
+          <button type="submit" class="mc-btn mc-btn-primary mcp-save-btn">Guardar cambios</button>
+        </form>
       </div>
 
       <!-- Referral code banner -->

@@ -715,54 +715,61 @@ function toggleProfilePanel() {
   if (!isOpen && !profileLoaded) renderProfilePanel();
 }
 
-async function renderProfilePanel() {
+function renderProfilePanel() {
   const p   = currentPlayer;
   const grp = GROUPS[p.group_name] || { emoji: '🎾', label: p.group_name, color: '#C9A84C' };
 
-  // Avatar iniciales
+  // Avatar
   const initials = p.name.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
   const avatarEl = document.getElementById('mcpAvatar');
-  avatarEl.textContent = initials;
-  avatarEl.style.background = grp.color + '22';
-  avatarEl.style.borderColor = grp.color;
-  avatarEl.style.color = grp.color;
+  avatarEl.textContent   = initials;
+  avatarEl.style.background   = grp.color + '22';
+  avatarEl.style.borderColor  = grp.color;
+  avatarEl.style.color        = grp.color;
 
   document.getElementById('mcpName').textContent  = p.name;
   document.getElementById('mcpGroup').innerHTML   = `${grp.emoji} ${grp.label}`;
   document.getElementById('mcpGroup').style.color = grp.color;
 
-  // Datos de cuenta
-  document.getElementById('mcpEmail').textContent  = p.email || '—';
-  document.getElementById('mcpPhone').textContent  = p.phone || '—';
-  document.getElementById('mcpSeason').textContent = SEASON_LABELS_PROFILE[p.season_start] || '—';
-  document.getElementById('mcpStatus').textContent =
-    p.payment_status === 'paid'   ? '✅ Pagado'  :
-    p.payment_status === 'exempt' ? '✅ Exento'  : '⏳ Pendiente';
+  // Rellena los campos editables
+  document.getElementById('mcpInputName').value  = p.name  || '';
+  document.getElementById('mcpInputEmail').value = p.email || '';
+  document.getElementById('mcpInputDob').value   = p.date_of_birth || '';
 
-  // Código de referido
-  if (p.referral_code) {
-    document.getElementById('mcpRefSection').style.display = '';
-    document.getElementById('mcpRefCode').textContent = p.referral_code;
-    document.getElementById('mcpRefEarned').textContent =
-      `€${p.referral_discount_earned || 0}`;
-    document.getElementById('mcpRefCopyBtn').onclick = () => {
-      navigator.clipboard.writeText(p.referral_code).then(() => {
-        const btn = document.getElementById('mcpRefCopyBtn');
-        btn.textContent = '✓';
-        setTimeout(() => { btn.textContent = 'Copiar'; }, 2000);
-      });
-    };
-  }
+  // Formulario de guardado
+  document.getElementById('mcpForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const newName  = document.getElementById('mcpInputName').value.trim();
+    const newEmail = document.getElementById('mcpInputEmail').value.trim().toLowerCase();
+    const newDob   = document.getElementById('mcpInputDob').value || null;
+    const btn      = e.submitter;
+    const msg      = document.getElementById('mcpSaveMsg');
 
-  // Stats desde Supabase
-  try {
-    const { data } = await _supabase.rpc('get_group_standings', { p_group: p.group_name });
-    const s = (data || []).find(r => r.player_id === p.id);
-    document.getElementById('mcpPJ').textContent  = s ? s.pj      : '0';
-    document.getElementById('mcpW').textContent   = s ? s.ganados  : '0';
-    document.getElementById('mcpL').textContent   = s ? s.perdidos : '0';
-    document.getElementById('mcpPts').textContent = s ? s.pts      : '0';
-  } catch (_) {}
+    if (!newName || !newEmail) return;
+    btn.disabled = true; btn.textContent = 'Guardando…';
+
+    const { error } = await _supabase.from('players')
+      .update({ name: newName, email: newEmail, date_of_birth: newDob })
+      .eq('id', p.id);
+
+    if (error) {
+      msg.textContent = '❌ Error al guardar.';
+      msg.className   = 'mc-msg mc-msg-error';
+    } else {
+      currentPlayer.name          = newName;
+      currentPlayer.email         = newEmail;
+      currentPlayer.date_of_birth = newDob;
+      document.getElementById('mcpName').textContent        = newName;
+      document.getElementById('userGreeting').textContent   = '¡Hola, ' + newName + '!';
+      document.getElementById('profileToggleBtn').textContent =
+        newName.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      msg.textContent = '✅ Guardado';
+      msg.className   = 'mc-msg mc-msg-success';
+    }
+    msg.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Guardar cambios';
+    setTimeout(() => { msg.style.display = 'none'; }, 3000);
+  };
 
   profileLoaded = true;
 }
