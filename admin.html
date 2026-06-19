@@ -60,6 +60,38 @@
         <div id="adminPlayersList"></div>
       </div>
 
+      <!-- ---- CSV IMPORT: set season_start ---- -->
+      <div class="admin-block fade-in">
+        <h2 class="admin-block-title">📥 Import season history (CSV)</h2>
+        <p style="color:var(--white-muted);font-size:.88rem;margin-bottom:16px;line-height:1.55;">
+          Upload a CSV with columns <code style="color:var(--gold)">email,season_start</code> to set loyalty tiers for existing players.<br>
+          Valid values for <code style="color:var(--gold)">season_start</code>: <code>founder</code> · <code>t2_2025</code> · <code>t3_2025</code> · <code>t4_2025</code> · <code>t1_2026</code> · <code>t2_2026</code> · <code>new</code>
+        </p>
+
+        <div class="reg-csv-upload" id="csvDropZone">
+          <label class="reg-csv-upload-label" for="csvFileInput">
+            📄 Click to select CSV file (or drag &amp; drop)
+          </label>
+          <input type="file" id="csvFileInput" accept=".csv,text/csv">
+        </div>
+
+        <div id="csvPreviewWrap" style="display:none;">
+          <div class="reg-csv-preview">
+            <table class="reg-csv-table">
+              <thead><tr><th>Email</th><th>Season</th><th>Status</th></tr></thead>
+              <tbody id="csvPreviewBody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <button class="mc-btn mc-btn-primary" id="csvImportBtn" style="width:auto;">
+              ✅ Import <span id="csvImportCount">0</span> players
+            </button>
+            <button class="mc-btn mc-btn-ghost" id="csvCancelBtn" style="width:auto;">Cancel</button>
+            <span id="csvMsg" class="mc-msg" style="display:none;"></span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -74,8 +106,8 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-config.js?v=9"></script>
   <script src="js/main.js"></script>
-  <script src="js/admin.js"></script>
+  <script src="js/admin.js?v=3"></script>
 </body>
 </html>
