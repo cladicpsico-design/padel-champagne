@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — Padel Champagne</title>
+  <meta name="description" content="Join the Padel Champagne league. Register for the new season.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Lora:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DED6T6CSLQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DED6T6CSLQ');
+  </script>
+</head>
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-logo">
+        <img src="assets/logo.png" alt="Padel Champagne" class="navbar-logo-img">
+        <span>PADEL CHAMPAGNE</span>
+      </a>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="navbar-menu" id="navbarMenu">
+        <li><a href="index.html"     class="navbar-link">Home</a></li>
+        <li><a href="league.html"    class="navbar-link">League</a></li>
+        <li><a href="standings.html" class="navbar-link">Standings</a></li>
+        <li><a href="matches.html"   class="navbar-link">Matches</a></li>
+        <li><a href="events.html"    class="navbar-link">Events</a></li>
+        <li><a href="register.html"  class="navbar-link navbar-link-cta active">Register</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ========== PAGE TABS ========== -->
+  <div class="page-tabs">
+    <a href="index.html"     class="page-tab">Home</a>
+    <a href="league.html"    class="page-tab">League</a>
+    <a href="standings.html" class="page-tab">Standings</a>
+    <a href="matches.html"   class="page-tab">Matches</a>
+    <a href="events.html"    class="page-tab">Events</a>
+    <a href="register.html"  class="page-tab page-tab-cta active">Register</a>
+  </div>
+
+  <!-- ========== PAGE HERO ========== -->
+  <section class="page-hero">
+    <div class="container">
+      <h1 class="page-hero-title">JOIN THE LEAGUE</h1>
+      <p class="page-hero-subtitle">Temporada Verano 2026 · Empieza el 10 de agosto</p>
+    </div>
+  </section>
+
+  <!-- ========== SUCCESS STATE ========== -->
+  <section class="section" id="successSection" style="display:none;">
+    <div class="container">
+      <div class="mc-card mc-card-center">
+        <div class="mc-card-icon">🎾</div>
+        <h3 class="mc-card-title">You're in!</h3>
+        <p class="mc-card-desc">Payment confirmed. You'll receive an email with your sign-in link before the season kicks off on August 10.</p>
+        <a href="matches.html" class="mc-btn mc-btn-primary" style="margin-top:8px;display:inline-flex;">View matches →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== REGISTER SECTION ========== -->
+  <section class="section" id="registerSection">
+    <div class="container">
+      <div class="reg-layout">
+
+        <!-- ─── FORM ─────────────────────────────────────────── -->
+        <div class="reg-form-col">
+          <div class="mc-card">
+            <h3 class="mc-card-title" style="margin-bottom:6px;">Tus datos</h3>
+            <p class="mc-card-desc">Rellena el formulario — serás redirigido a la página de pago seguro de Stripe.</p>
+
+            <form id="regForm" class="mc-form" novalidate>
+
+              <div class="reg-field">
+                <label class="reg-label" for="regName">Full name <span class="reg-req">*</span></label>
+                <input type="text" id="regName" class="mc-input" placeholder="Nico García"
+                  required maxlength="80" autocomplete="name">
+              </div>
+
+              <div class="reg-field">
+                <label class="reg-label" for="regEmail">Email <span class="reg-req">*</span></label>
+                <input type="email" id="regEmail" class="mc-input" placeholder="nico@email.com"
+                  required autocomplete="email">
+                <div id="playerFoundMsg" class="reg-player-found" style="display:none;"></div>
+              </div>
+
+              <div class="reg-field">
+                <label class="reg-label" for="regPhone">
+                  Phone <span class="reg-optional">(optional)</span>
+                </label>
+                <input type="tel" id="regPhone" class="mc-input" placeholder="+34 600 000 000" autocomplete="tel">
+              </div>
+
+              <div class="reg-field">
+                <label class="reg-label" for="regDob">
+                  Date of birth <span class="reg-optional">(optional)</span>
+                </label>
+                <input type="date" id="regDob" class="mc-input">
+              </div>
+
+              <div class="reg-field">
+                <label class="reg-label" for="regGroup">Preferred group <span class="reg-req">*</span></label>
+                <select id="regGroup" class="mc-input mc-select" required>
+                  <option value="">Select a group…</option>
+                  <option value="whisky">🥃 Whisky</option>
+                  <option value="champagne">🍾 Champagne</option>
+                  <option value="coronita">🍺 Coronita</option>
+                  <option value="helles">🍺 Helles</option>
+                  <option value="weizen">🌾 Weizen</option>
+                </select>
+              </div>
+
+              <div class="reg-field">
+                <label class="reg-label" for="regSeasonCode">
+                  Season code <span class="reg-optional">(optional)</span>
+                </label>
+                <input type="text" id="regSeasonCode" class="mc-input" placeholder="e.g. T125, T225…"
+                  maxlength="10" autocomplete="off" style="text-transform:uppercase;">
+                <div id="seasonCodeMsg" style="display:none;margin-top:4px;"></div>
+                <div class="reg-field-hint">Received a code from us? Enter it to unlock your loyalty discount.</div>
+              </div>
+
+              <div class="reg-field">
+                <label class="reg-label" for="regReferral">
+                  Referral code <span class="reg-optional">(optional)</span>
+                </label>
+                <input type="text" id="regReferral" class="mc-input" placeholder="e.g. NICO123"
+                  maxlength="20" autocomplete="off" style="text-transform:uppercase;">
+                <div class="reg-field-hint">Got a code from a friend? They'll earn a €10 credit for the next season.</div>
+              </div>
+
+              <div id="regMsg" class="mc-msg" style="display:none;"></div>
+
+              <button type="submit" id="regSubmitBtn" class="mc-btn mc-btn-primary reg-submit-btn">
+                Registrarse &amp; Pagar <span id="regBtnPrice">€45</span> →
+              </button>
+
+              <p class="reg-terms">Pago seguro mediante Stripe. Al registrarte aceptas las normas de la liga y la cuota de temporada.</p>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- ─── PRICE CARD ──────────────────────────────────── -->
+        <div class="reg-price-col">
+          <div class="reg-price-card">
+
+            <div class="reg-price-header">💳 Season fee</div>
+
+            <div class="reg-price-line">
+              <span>Precio base</span>
+              <span>€45</span>
+            </div>
+            <div id="priceBreakdown"></div>
+            <div class="reg-price-divider"></div>
+            <div class="reg-price-total-line">
+              <span>Total</span>
+              <span id="priceTotal" class="reg-price-total-amount">€45</span>
+            </div>
+
+            <div id="priceHint" class="reg-price-hint">
+              ¿Tienes código de temporada? Introdúcelo arriba para aplicar tu descuento de fidelidad.
+            </div>
+
+            <!-- Loyalty tier table -->
+            <div class="reg-tier-section">
+              <div class="reg-tier-title">Precios por temporada</div>
+              <div class="reg-tier-row">
+                <span><code class="reg-code">T125</code> T1 2025</span>
+                <span class="reg-tier-save">€25</span>
+              </div>
+              <div class="reg-tier-row">
+                <span><code class="reg-code">T225</code> T2 2025</span>
+                <span class="reg-tier-save">€25</span>
+              </div>
+              <div class="reg-tier-row">
+                <span><code class="reg-code">T325</code> T3 2025</span>
+                <span class="reg-tier-save">€30</span>
+              </div>
+              <div class="reg-tier-row">
+                <span><code class="reg-code">T425</code> T4 2025</span>
+                <span class="reg-tier-save">€30</span>
+              </div>
+              <div class="reg-tier-row">
+                <span><code class="reg-code">T126</code> T1 2026</span>
+                <span class="reg-tier-save">€35</span>
+              </div>
+              <div class="reg-tier-row">
+                <span><code class="reg-code">T226</code> T2 2026</span>
+                <span class="reg-tier-save">€35</span>
+              </div>
+              <div class="reg-tier-row reg-tier-referral">
+                <span>Por cada amigo que traigas ✦</span>
+                <span class="reg-tier-save">-€10</span>
+              </div>
+            </div>
+
+            <div class="reg-price-secure">🔒 Secured by Stripe</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <img src="assets/logo.png" alt="Padel Champagne" class="footer-logo">
+        <p>Padel Champagne League</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/register.js"></script>
+</body>
+</html>

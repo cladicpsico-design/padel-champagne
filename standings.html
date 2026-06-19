@@ -38,6 +38,7 @@
         <li><a href="standings.html" class="navbar-link active">Standings</a></li>
         <li><a href="matches.html"   class="navbar-link">Matches</a></li>
         <li><a href="events.html"    class="navbar-link">Events</a></li>
+        <li><a href="register.html" class="navbar-link navbar-link-cta">Register</a></li>
       </ul>
     </div>
   </nav>
@@ -48,13 +49,14 @@
     <a href="standings.html" class="page-tab active">Standings</a>
     <a href="matches.html"   class="page-tab">Matches</a>
     <a href="events.html"    class="page-tab">Events</a>
+    <a href="register.html"  class="page-tab page-tab-cta">Register</a>
   </div>
 
   <!-- ========== PAGE HERO ========== -->
   <section class="page-hero">
     <div class="container">
       <h1 class="page-hero-title">STANDINGS</h1>
-      <p class="page-hero-subtitle">Season 2 &middot; Live classification updated after every match day</p>
+      <p class="page-hero-subtitle">Temporada Verano 2026 · Clasificación en tiempo real</p>
     </div>
   </section>
 
@@ -79,7 +81,7 @@
           </div>
         </div>
         <div class="standings-empty" id="standingsEmpty" style="display:none;">
-          <p>&#127870; Season 2 starts April 13th &mdash; standings will appear here</p>
+          <p>🍾 La temporada empieza el 10 de agosto — la clasificación aparecerá aquí</p>
         </div>
         <table class="standings-table" id="standingsTable" style="display:none;">
           <thead>
@@ -109,7 +111,9 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js?v=10"></script>
   <script src="js/main.js"></script>
-  <script src="js/standings.js?v=2"></script>
+  <script src="js/standings.js?v=3"></script>
 </body>
 </html>

@@ -1685,3 +1685,560 @@ img {
   .admin-slot-actions { flex-direction: row; }
   .mc-btn-primary, .mc-btn-signed { font-size: .85rem; padding: 10px 14px; }
 }
+
+/* ============================================
+   REGISTRATION — reg-* components
+   ============================================ */
+
+/* ── Navbar CTA ── */
+.navbar-link-cta {
+  color: var(--gold) !important;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 6px;
+}
+.navbar-link-cta:hover,
+.navbar-link-cta.active {
+  background: rgba(201,168,76,0.15);
+  color: var(--gold) !important;
+}
+.page-tab-cta {
+  color: var(--gold) !important;
+}
+.page-tab-cta.active {
+  color: var(--gold) !important;
+  border-bottom-color: var(--gold);
+}
+
+/* ── Layout: 2-col on desktop, stack on mobile ── */
+.reg-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 28px;
+  align-items: start;
+}
+@media (max-width: 780px) {
+  .reg-layout {
+    grid-template-columns: 1fr;
+  }
+  .reg-price-col {
+    order: -1; /* price card above form on mobile */
+  }
+}
+
+/* ── Form column ── */
+.reg-form-col .mc-card {
+  border-radius: 16px;
+  padding: 32px 28px;
+}
+
+/* ── Form field ── */
+.reg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.reg-label {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--white-muted);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.reg-req       { color: var(--gold); }
+.reg-optional  { color: var(--white-muted); font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+.reg-field-hint {
+  font-size: .78rem;
+  color: var(--white-muted);
+  line-height: 1.45;
+  margin-top: 2px;
+}
+
+/* ── Player found message ── */
+.reg-player-found {
+  font-size: .85rem;
+  color: #6DBF7E;
+  margin-top: 4px;
+  padding: 8px 12px;
+  background: rgba(109,191,126,0.08);
+  border: 1px solid rgba(109,191,126,0.25);
+  border-radius: 6px;
+}
+.reg-player-found strong { color: #6DBF7E; }
+
+/* ── Submit button ── */
+.reg-submit-btn {
+  margin-top: 6px;
+  font-size: 1rem;
+  padding: 14px 20px;
+  letter-spacing: .5px;
+}
+
+/* ── Terms line ── */
+.reg-terms {
+  font-size: .76rem;
+  color: var(--white-muted);
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+/* ── Price card ── */
+.reg-price-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 16px;
+  padding: 24px 22px;
+  position: sticky;
+  top: 120px;
+}
+
+.reg-price-header {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  color: var(--white);
+  margin-bottom: 18px;
+}
+
+/* ── Price lines ── */
+.reg-price-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .88rem;
+  color: var(--white-muted);
+  padding: 4px 0;
+}
+.reg-price-discount {
+  color: #6DBF7E;
+  font-weight: 600;
+}
+
+.reg-price-divider {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin: 12px 0;
+}
+
+.reg-price-total-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--white);
+}
+.reg-price-total-amount {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.9rem;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+
+/* ── Price hint ── */
+.reg-price-hint {
+  margin-top: 10px;
+  font-size: .78rem;
+  color: var(--white-muted);
+  line-height: 1.45;
+  font-style: italic;
+  font-family: 'Lora', serif;
+}
+
+/* ── Loyalty tier table ── */
+.reg-tier-section {
+  margin-top: 22px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 16px;
+}
+.reg-tier-title {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--white-muted);
+  margin-bottom: 10px;
+}
+.reg-tier-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: .82rem;
+  color: var(--white-muted);
+  padding: 4px 0;
+}
+.reg-tier-row:not(:last-child) {
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.reg-tier-referral {
+  color: var(--gold);
+  opacity: .8;
+}
+.reg-tier-save {
+  color: #6DBF7E;
+  font-weight: 600;
+}
+
+/* ── Secure badge ── */
+.reg-price-secure {
+  margin-top: 16px;
+  font-size: .75rem;
+  color: var(--white-muted);
+  text-align: center;
+  letter-spacing: .5px;
+}
+code.reg-code {
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 4px;
+  color: var(--gold);
+  font-family: monospace;
+  font-size: .78rem;
+  padding: 1px 5px;
+  margin-right: 4px;
+}
+
+/* ── Admin: season badge on player chip ── */
+.admin-season-badge {
+  font-size: .72rem;
+  color: var(--gold);
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 10px;
+  padding: 1px 7px;
+  margin-top: 2px;
+  display: inline-block;
+}
+.admin-payment-paid    { color: #6DBF7E; }
+.admin-payment-pending { color: #E8C547; }
+.admin-payment-exempt  { color: var(--white-muted); }
+
+/* ── Admin: CSV import ── */
+.reg-csv-upload {
+  border: 2px dashed rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition);
+  margin-bottom: 14px;
+}
+.reg-csv-upload:hover { border-color: var(--gold-light); }
+.reg-csv-upload input { display: none; }
+.reg-csv-upload-label {
+  color: var(--white-muted);
+  font-size: .9rem;
+  cursor: pointer;
+}
+.reg-csv-preview {
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  margin-top: 12px;
+}
+.reg-csv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .83rem;
+}
+.reg-csv-table th {
+  padding: 9px 12px;
+  text-align: left;
+  background: rgba(201,168,76,0.08);
+  color: var(--gold);
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: sticky;
+  top: 0;
+}
+.reg-csv-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--white-muted);
+}
+.reg-csv-table tr:hover td { background: rgba(255,255,255,0.02); }
+.reg-csv-match   { color: #6DBF7E; }
+.reg-csv-nomatch { color: #E07070; }
+
+/* ── Referral bar (matches page) ── */
+.mc-referral-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: rgba(201,168,76,0.07);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.mc-referral-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.mc-referral-label {
+  font-size: .8rem;
+  color: var(--white-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.mc-referral-code {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.15rem;
+  color: var(--gold);
+  letter-spacing: 3px;
+}
+.mc-referral-copy {
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 6px;
+  color: var(--gold);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .78rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  transition: background var(--transition);
+}
+.mc-referral-copy:hover { background: rgba(201,168,76,0.25); }
+.mc-referral-earned {
+  font-size: .8rem;
+  color: var(--white-muted);
+  font-style: italic;
+  font-family: 'Lora', serif;
+}
+
+/* ── Admin email row ── */
+.admin-email-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+.admin-email-input {
+  flex: 1;
+}
+.admin-season-select {
+  margin-top: 0;
+}
+
+/* ============================================
+   MODAL DE RESULTADO
+   ============================================ */
+
+.mc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  backdrop-filter: blur(4px);
+}
+.mc-modal-box {
+  background: var(--bg-card);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 12px;
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.mc-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--white-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: color var(--transition);
+}
+.mc-modal-close:hover { color: var(--white); }
+.mc-modal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  color: var(--white);
+  margin-bottom: 20px;
+  padding-right: 32px;
+}
+
+/* Teams display inside modal */
+.mc-result-teams {
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+.mc-result-team-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+.mc-result-team-label {
+  font-size: .75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--gold);
+  width: 70px;
+  flex-shrink: 0;
+}
+.mc-result-team-names {
+  color: var(--white);
+  font-size: .9rem;
+  font-weight: 500;
+}
+.mc-result-vs-divider {
+  text-align: center;
+  color: var(--white-muted);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: 4px 0;
+}
+
+/* Set score grid */
+.mc-result-sets {
+  margin-bottom: 16px;
+}
+.mc-result-set-header {
+  display: grid;
+  grid-template-columns: 56px 1fr 24px 1fr;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: .72rem;
+  color: var(--white-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.mc-result-set-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 24px 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.mc-result-set-row label {
+  font-size: .82rem;
+  color: var(--white-muted);
+  font-weight: 500;
+}
+.mc-result-score {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  color: var(--white);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 4px;
+  appearance: textfield;
+  -moz-appearance: textfield;
+  transition: border-color var(--transition);
+}
+.mc-result-score::-webkit-inner-spin-button,
+.mc-result-score::-webkit-outer-spin-button { -webkit-appearance: none; }
+.mc-result-score:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.mc-result-dash {
+  text-align: center;
+  color: var(--white-muted);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* Winner preview */
+.mc-result-winner-preview {
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--gold);
+  font-weight: 600;
+  font-size: .9rem;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+/* ── Result display inside match cards ─── */
+.mc-result-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.mc-result-enter-btn {
+  width: 100%;
+  font-size: .85rem;
+}
+.mc-result-score {
+  font-size: .88rem;
+  color: var(--white);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+}
+/* Override for score display (not input) */
+.mc-result-section .mc-result-score {
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  width: auto;
+  appearance: auto;
+  -moz-appearance: auto;
+  font-size: .88rem;
+  color: var(--white);
+  display: inline;
+}
+.mc-result-status-tag {
+  font-size: .78rem;
+  color: var(--white-muted);
+}
+.mc-result-pending {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mc-result-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.mc-result-confirm .mc-result-score {
+  display: block;
+  font-size: .88rem;
+}
+.mc-result-confirm-btn {
+  font-size: .82rem;
+  padding: 7px 14px;
+}
+.mc-result-final {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.mc-result-winner {
+  font-size: .82rem;
+  color: var(--gold);
+  font-weight: 600;
+}

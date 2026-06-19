@@ -36,6 +36,7 @@
         <li><a href="standings.html" class="navbar-link">Standings</a></li>
         <li><a href="matches.html"   class="navbar-link active">Matches</a></li>
         <li><a href="events.html"    class="navbar-link">Events</a></li>
+        <li><a href="register.html" class="navbar-link navbar-link-cta">Register</a></li>
       </ul>
     </div>
   </nav>
@@ -47,6 +48,7 @@
     <a href="standings.html" class="page-tab">Standings</a>
     <a href="matches.html"   class="page-tab active">Matches</a>
     <a href="events.html"    class="page-tab">Events</a>
+    <a href="register.html"  class="page-tab page-tab-cta">Register</a>
   </div>
 
   <!-- ========== PAGE HERO ========== -->
@@ -113,6 +115,16 @@
         </div>
       </div>
 
+      <!-- Referral code banner -->
+      <div class="mc-referral-bar" id="referralBar" style="display:none;">
+        <div class="mc-referral-left">
+          <span class="mc-referral-label">🎁 Your referral code</span>
+          <span class="mc-referral-code" id="referralCode"></span>
+          <button class="mc-referral-copy" id="referralCopyBtn" onclick="copyReferralCode()">Copy</button>
+        </div>
+        <span class="mc-referral-earned" id="referralEarned"></span>
+      </div>
+
       <!-- Content tabs -->
       <div class="mc-tabs fade-in">
         <button class="mc-tab active" data-tab="slots">📅 Available slots</button>
@@ -144,6 +156,57 @@
     </div>
   </section>
 
+  <!-- ========== MODAL RESULTADO ========== -->
+  <div id="resultModal" class="mc-modal-overlay" style="display:none;" onclick="closeResultModal(event)">
+    <div class="mc-modal-box">
+      <button class="mc-modal-close" onclick="closeResultModalDirect()">✕</button>
+      <h3 class="mc-modal-title">🎾 Introduce el resultado</h3>
+
+      <div class="mc-result-teams">
+        <div class="mc-result-team-row">
+          <span class="mc-result-team-label">Equipo A</span>
+          <span id="resultTeam1Names" class="mc-result-team-names"></span>
+        </div>
+        <div class="mc-result-vs-divider">VS</div>
+        <div class="mc-result-team-row">
+          <span class="mc-result-team-label">Equipo B</span>
+          <span id="resultTeam2Names" class="mc-result-team-names"></span>
+        </div>
+      </div>
+
+      <div class="mc-result-sets">
+        <div class="mc-result-set-header">
+          <span></span><span>Equipo A</span><span></span><span>Equipo B</span>
+        </div>
+        <div class="mc-result-set-row">
+          <label>Set 1</label>
+          <input type="number" id="res_s1t1" class="mc-result-score" min="0" max="7" placeholder="6" oninput="onScoreInput()">
+          <span class="mc-result-dash">–</span>
+          <input type="number" id="res_s1t2" class="mc-result-score" min="0" max="7" placeholder="3" oninput="onScoreInput()">
+        </div>
+        <div class="mc-result-set-row">
+          <label>Set 2</label>
+          <input type="number" id="res_s2t1" class="mc-result-score" min="0" max="7" placeholder="6" oninput="onScoreInput()">
+          <span class="mc-result-dash">–</span>
+          <input type="number" id="res_s2t2" class="mc-result-score" min="0" max="7" placeholder="4" oninput="onScoreInput()">
+        </div>
+        <div class="mc-result-set-row" id="res_set3row" style="display:none;">
+          <label>Set 3</label>
+          <input type="number" id="res_s3t1" class="mc-result-score" min="0" max="7" placeholder="7" oninput="onScoreInput()">
+          <span class="mc-result-dash">–</span>
+          <input type="number" id="res_s3t2" class="mc-result-score" min="0" max="7" placeholder="5" oninput="onScoreInput()">
+        </div>
+      </div>
+
+      <div id="resultWinnerPreview" class="mc-result-winner-preview" style="display:none;"></div>
+      <div id="resultModalMsg" class="mc-msg" style="display:none;"></div>
+
+      <button class="mc-btn mc-btn-primary" id="resultSubmitBtn" onclick="submitResult()">
+        ✅ Guardar resultado
+      </button>
+    </div>
+  </div>
+
   <!-- ========== FOOTER ========== -->
   <footer class="footer">
     <div class="container">
@@ -156,8 +219,8 @@
 
   <!-- Supabase JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js?v=8"></script>
+  <script src="js/supabase-config.js?v=10"></script>
   <script src="js/main.js"></script>
-  <script src="js/matches.js?v=8"></script>
+  <script src="js/matches.js?v=11"></script>
 </body>
 </html>

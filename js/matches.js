@@ -3,8 +3,9 @@
 // Slots come from Google Sheet; signups stored in Supabase
 // ============================================================
 
-let currentPlayer = null;
-let myAvailability = new Set(); // slot keys the player has signed up for
+let currentPlayer  = null;
+let myAvailability = new Set();
+let loadedMatches  = [];       // guardado globalmente para el modal de resultados
 
 document.addEventListener('DOMContentLoaded', async () => {
   const { data: { session } } = await _supabase.auth.getSession();
@@ -12,13 +13,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   await initPlayer(session);
 });
 
-// ---- Login ----
+// ── Login ──────────────────────────────────────────────────────
 function setupLoginForm() {
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim();
     const btn   = document.getElementById('loginBtn');
-    btn.disabled = true; btn.textContent = 'Sending…';
+    btn.disabled = true; btn.textContent = 'Enviando…';
 
     const { error } = await _supabase.auth.signInWithOtp({
       email,
@@ -26,13 +27,13 @@ function setupLoginForm() {
     });
 
     if (error) showMsg('loginMsg', '❌ ' + error.message, 'error');
-    else       showMsg('loginMsg', '✅ Check your email — link sent!', 'success');
+    else       showMsg('loginMsg', '✅ Revisa tu email — ¡enlace enviado!', 'success');
 
     btn.disabled = false; btn.textContent = 'Send sign-in link';
   });
 }
 
-// ---- Player init ----
+// ── Player init ────────────────────────────────────────────────
 async function initPlayer(session) {
   let { data: player } = await _supabase
     .from('players').select('*').eq('auth_id', session.user.id).maybeSingle();
@@ -53,7 +54,7 @@ async function initPlayer(session) {
   showSection('main');
 }
 
-// ---- Profile setup ----
+// ── Profile setup ──────────────────────────────────────────────
 function setupProfileForm(session) {
   document.getElementById('profileForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -78,18 +79,32 @@ function setupProfileForm(session) {
   });
 }
 
-// ---- Main section ----
+// ── Main section ───────────────────────────────────────────────
 function renderMainSection() {
   const grp = GROUPS[currentPlayer.group_name] || { emoji:'🎾', label: currentPlayer.group_name, color:'#C9A84C' };
 
-  document.getElementById('heroSubtitle').textContent = 'Season 2 · Your matches & availability';
-  document.getElementById('userGreeting').textContent = 'Hey, ' + currentPlayer.name + '!';
+  document.getElementById('heroSubtitle').textContent = 'Temporada Verano 2026 · Tus partidos y disponibilidad';
+  document.getElementById('userGreeting').textContent = '¡Hola, ' + currentPlayer.name + '!';
 
   const badge = document.getElementById('userGroupBadge');
   badge.textContent = grp.emoji + ' ' + grp.label;
   badge.style.setProperty('--badge-color', grp.color);
 
   if (currentPlayer.is_admin) document.getElementById('adminLink').style.display = 'inline-flex';
+
+  // Banner de código de referido
+  if (currentPlayer.referral_code) {
+    const refBar = document.getElementById('referralBar');
+    if (refBar) {
+      document.getElementById('referralCode').textContent = currentPlayer.referral_code;
+      const discount = currentPlayer.referral_discount_earned || 0;
+      document.getElementById('referralEarned').textContent =
+        discount > 0
+          ? `Has ganado €${discount} en créditos 🎁`
+          : 'Comparte tu código — ganas €10 por cada amigo que se apunte';
+      refBar.style.display = 'flex';
+    }
+  }
 
   document.getElementById('signOutBtn').addEventListener('click', async () => {
     await _supabase.auth.signOut(); window.location.reload();
@@ -102,7 +117,6 @@ function renderMainSection() {
       tab.classList.add('active');
       const panelId = 'tab' + tab.dataset.tab.charAt(0).toUpperCase() + tab.dataset.tab.slice(1);
       document.getElementById(panelId).style.display = 'block';
-      // Refresh data when switching tabs
       if (tab.dataset.tab === 'mymatch') loadMyMatches();
       if (tab.dataset.tab === 'slots')   loadSlots();
     });
@@ -112,13 +126,12 @@ function renderMainSection() {
   loadMyMatches();
 }
 
-// ---- Load slots — own group first, then league calendar ----
+// ── Load slots ─────────────────────────────────────────────────
 async function loadSlots() {
   document.getElementById('slotsLoading').style.display = 'flex';
   document.getElementById('slotsEmpty').style.display   = 'none';
   document.getElementById('slotsList').innerHTML        = '';
 
-  // Fetch ALL groups in parallel
   const groupKeys = Object.keys(GROUPS);
   const results   = await Promise.all(groupKeys.map(g => fetchSlotsFromSheet(g)));
 
@@ -132,12 +145,10 @@ async function loadSlots() {
   const mySlots    = allSlots.filter(s => s.group.toLowerCase() === myGroup);
   const otherSlots = allSlots.filter(s => s.group.toLowerCase() !== myGroup);
 
-  // Fetch my availability
   const { data: avail } = await _supabase
     .from('availability').select('slot_key').eq('player_id', currentPlayer.id);
   myAvailability = new Set((avail || []).map(a => a.slot_key));
 
-  // Supabase signup counts for OWN group open slots only
   const countMap = {};
   const openKeys = mySlots.filter(s => s.sheetPlayerCount < 4).map(s => s.slotKey);
   if (openKeys.length > 0) {
@@ -155,11 +166,10 @@ async function loadSlots() {
   const container = document.getElementById('slotsList');
   const myGrp = GROUPS[currentPlayer.group_name] || { emoji:'🎾', label: currentPlayer.group_name, color:'#C9A84C' };
 
-  // ── SECTION 1: My group (big cards) ──────────────────────────
   if (mySlots.length > 0) {
     const sec = document.createElement('div');
     sec.className = 'mc-section-header';
-    sec.innerHTML = `<span style="color:${myGrp.color}">${myGrp.emoji} ${myGrp.label}</span> — Your group`;
+    sec.innerHTML = `<span style="color:${myGrp.color}">${myGrp.emoji} ${myGrp.label}</span> — Tu grupo`;
     container.appendChild(sec);
 
     mySlots.forEach(slot => {
@@ -171,14 +181,12 @@ async function loadSlots() {
     });
   }
 
-  // ── SECTION 2: Other groups — compact calendar ────────────────
   if (otherSlots.length > 0) {
     const sec = document.createElement('div');
     sec.className = 'mc-section-header mc-section-league';
-    sec.innerHTML = `🗓️ Other matches`;
+    sec.innerHTML = `🗓️ Otros partidos`;
     container.appendChild(sec);
 
-    // Group other slots by date
     const byDate = {};
     otherSlots.forEach(s => {
       if (!byDate[s.date]) byDate[s.date] = [];
@@ -204,7 +212,7 @@ async function loadSlots() {
   }
 }
 
-// ── Full card — own group ─────────────────────────────────────────
+// ── Full card — own group ──────────────────────────────────────
 function buildSlotCard(slot, takenCount, isSigned, grp, isOpen) {
   const card = document.createElement('div');
   card.className = 'mc-slot-card';
@@ -246,7 +254,7 @@ function buildSlotCard(slot, takenCount, isSigned, grp, isOpen) {
   return card;
 }
 
-// ── Compact row — other groups calendar ──────────────────────────
+// ── Compact row — other groups ─────────────────────────────────
 function buildCompactRow(slot, grp) {
   const row = document.createElement('div');
   row.className = 'mc-compact-row';
@@ -265,7 +273,7 @@ function buildCompactRow(slot, grp) {
   return row;
 }
 
-// ---- Toggle availability ----
+// ── Toggle availability ────────────────────────────────────────
 async function toggleAvailability(slotKey) {
   const btn    = document.querySelector(`.mc-join-btn[data-slot-key="${CSS.escape(slotKey)}"]`);
   const signed = btn.dataset.signed === 'true';
@@ -283,7 +291,7 @@ async function toggleAvailability(slotKey) {
   loadMyMatches();
 }
 
-// ---- My Matches ----
+// ── My Matches ─────────────────────────────────────────────────
 async function loadMyMatches() {
   document.getElementById('matchesLoading').style.display = 'flex';
   document.getElementById('matchesEmpty').style.display   = 'none';
@@ -291,7 +299,6 @@ async function loadMyMatches() {
 
   const pid = currentPlayer.id;
 
-  // Fetch drawn matches + my availability signups in parallel
   const [{ data: matches }, { data: signups }] = await Promise.all([
     _supabase.from('matches')
       .select(`*, p1:players!matches_player1_id_fkey(id,name), p2:players!matches_player2_id_fkey(id,name),
@@ -304,11 +311,23 @@ async function loadMyMatches() {
       .order('slot_key')
   ]);
 
+  loadedMatches = matches || [];
+
+  // Fetch results for all matches in one query
+  let resultMap = {};
+  if (loadedMatches.length > 0) {
+    const { data: results } = await _supabase
+      .from('match_results')
+      .select('*')
+      .in('match_id', loadedMatches.map(m => m.id));
+    (results || []).forEach(r => { resultMap[r.match_id] = r; });
+  }
+
   document.getElementById('matchesLoading').style.display = 'none';
 
-  const drawnKeys   = new Set((matches || []).map(m => m.slot_key));
+  const drawnKeys   = new Set(loadedMatches.map(m => m.slot_key));
   const pendingList = (signups || []).filter(s => !drawnKeys.has(s.slot_key));
-  const hasContent  = (matches && matches.length > 0) || pendingList.length > 0;
+  const hasContent  = loadedMatches.length > 0 || pendingList.length > 0;
 
   if (!hasContent) {
     document.getElementById('matchesEmpty').style.display = 'block'; return;
@@ -316,25 +335,24 @@ async function loadMyMatches() {
 
   const container = document.getElementById('matchesList');
 
-  // ── Confirmed drawn matches ──
-  if (matches && matches.length > 0) {
+  if (loadedMatches.length > 0) {
     const hdr = document.createElement('div');
     hdr.className = 'mc-section-header';
-    hdr.textContent = '✅ Confirmed matches';
+    hdr.textContent = '✅ Partidos confirmados';
     container.appendChild(hdr);
-    matches.forEach(m => container.appendChild(buildMatchCard(m)));
+    loadedMatches.forEach(m => container.appendChild(buildMatchCard(m, resultMap[m.id] || null)));
   }
 
-  // ── Pending availability (signed up, awaiting draw) ──
   if (pendingList.length > 0) {
     const hdr = document.createElement('div');
     hdr.className = 'mc-section-header';
-    hdr.textContent = '⏳ Signed up — awaiting draw';
+    hdr.textContent = '⏳ Apuntado — esperando sorteo';
     container.appendChild(hdr);
     pendingList.forEach(s => container.appendChild(buildPendingCard(s.slot_key)));
   }
 }
 
+// ── Pending card ───────────────────────────────────────────────
 function buildPendingCard(slotKey) {
   const parts    = slotKey.split('|');
   const date     = parts[0] || '';
@@ -349,15 +367,15 @@ function buildPendingCard(slotKey) {
     </div>
     <div class="mc-match-location">📍 ${location}</div>
     <div class="mc-match-hidden">
-      🎲 <strong>Draw pending</strong>
-      <span>You're signed up — opponents assigned when the draw runs</span>
+      🎲 <strong>Sorteo pendiente</strong>
+      <span>Estás apuntado — los rivales se asignan cuando corra el sorteo</span>
     </div>
   `;
   return card;
 }
 
-function buildMatchCard(match) {
-  // slot_key = "YYYY-MM-DD|HH:MM|Location"
+// ── Match card ─────────────────────────────────────────────────
+function buildMatchCard(match, result) {
   const parts    = match.slot_key.split('|');
   const date     = parts[0] || '';
   const time     = parts[1] || '';
@@ -366,12 +384,17 @@ function buildMatchCard(match) {
   const revealed = isRevealed(date, time);
   const players  = [match.p1, match.p2, match.p3, match.p4].filter(Boolean);
 
+  // Is the match date/time already past?
+  const matchDateTime = new Date(date + 'T' + (time !== 'TBD' ? time : '23:59') + ':00');
+  const isPast = matchDateTime < new Date();
+
+  // Teams display
   let playersHTML;
   if (!revealed) {
     playersHTML = `
       <div class="mc-match-hidden">
-        🎭 <strong>Blind draw active</strong>
-        <span>Opponents revealed on ${revealDateLabel(date, time)}</span>
+        🎭 <strong>Sorteo activo</strong>
+        <span>Rivales revelados el ${revealDateLabel(date, time)}</span>
       </div>`;
   } else {
     const team1 = players.slice(0, 2);
@@ -388,6 +411,66 @@ function buildMatchCard(match) {
       </div>`;
   }
 
+  // Result section — only if match has been revealed AND is in the past
+  let resultHTML = '';
+  if (revealed && isPast) {
+    const playerIds = [match.player1_id, match.player2_id, match.player3_id, match.player4_id];
+    const imInMatch = playerIds.includes(currentPlayer.id);
+
+    if (!result) {
+      // No result yet — show entry button only if I'm in the match
+      if (imInMatch) {
+        resultHTML = `
+          <div class="mc-result-section">
+            <button class="mc-btn mc-btn-ghost mc-result-enter-btn"
+                    data-match-id="${match.id}">
+              🎾 Introduce el resultado
+            </button>
+          </div>`;
+      }
+    } else if (result.status === 'pending') {
+      const scoreStr = formatScore(result);
+      const winnerName = result.winner_team === 1
+        ? `${match.p1?.name} / ${match.p2?.name}`
+        : `${match.p3?.name} / ${match.p4?.name}`;
+      const isSubmitter = result.submitted_by === currentPlayer.id;
+      const canConfirm  = imInMatch && !isSubmitter;
+
+      if (isSubmitter) {
+        resultHTML = `
+          <div class="mc-result-section mc-result-pending">
+            <span class="mc-result-score">${scoreStr}</span>
+            <span class="mc-result-status-tag">⏳ Esperando confirmación</span>
+          </div>`;
+      } else if (canConfirm) {
+        resultHTML = `
+          <div class="mc-result-section mc-result-confirm">
+            <div class="mc-result-score">${scoreStr} · 🏆 ${winnerName}</div>
+            <button class="mc-btn mc-btn-primary mc-result-confirm-btn"
+                    data-result-id="${result.id}" style="margin-top:8px;">
+              ✅ Confirmar resultado
+            </button>
+          </div>`;
+      } else {
+        resultHTML = `
+          <div class="mc-result-section mc-result-pending">
+            <span class="mc-result-score">${scoreStr}</span>
+            <span class="mc-result-status-tag">⏳ Pendiente confirmación</span>
+          </div>`;
+      }
+    } else if (result.status === 'confirmed') {
+      const scoreStr = formatScore(result);
+      const winnerName = result.winner_team === 1
+        ? `${match.p1?.name} / ${match.p2?.name}`
+        : `${match.p3?.name} / ${match.p4?.name}`;
+      resultHTML = `
+        <div class="mc-result-section mc-result-final">
+          <span class="mc-result-score">${scoreStr}</span>
+          <span class="mc-result-winner">🏆 ${winnerName}</span>
+        </div>`;
+    }
+  }
+
   const card = document.createElement('div');
   card.className = 'mc-match-card fade-in';
   card.innerHTML = `
@@ -397,11 +480,221 @@ function buildMatchCard(match) {
     </div>
     <div class="mc-match-location">📍 ${location}</div>
     ${playersHTML}
+    ${resultHTML}
   `;
+
+  // Wire up buttons after DOM insert
+  const enterBtn = card.querySelector('.mc-result-enter-btn');
+  if (enterBtn) enterBtn.addEventListener('click', () => openResultModal(match.id));
+
+  const confirmBtn = card.querySelector('.mc-result-confirm-btn');
+  if (confirmBtn) confirmBtn.addEventListener('click', () => confirmResult(result.id));
+
   return card;
 }
 
-// ---- Utilities ----
+// ── Score formatter ────────────────────────────────────────────
+function formatScore(result) {
+  const sets = [`${result.set1_team1}–${result.set1_team2}`];
+  if (result.set2_team1 != null) sets.push(`${result.set2_team1}–${result.set2_team2}`);
+  if (result.set3_team1 != null) sets.push(`${result.set3_team1}–${result.set3_team2}`);
+  return sets.join(' · ');
+}
+
+// ── Result modal ───────────────────────────────────────────────
+
+let currentResultMatchId = null;
+
+function openResultModal(matchId) {
+  const match = loadedMatches.find(m => m.id === matchId);
+  if (!match) return;
+
+  currentResultMatchId = matchId;
+
+  document.getElementById('resultTeam1Names').textContent =
+    `${match.p1?.name || '?'} + ${match.p2?.name || '?'}`;
+  document.getElementById('resultTeam2Names').textContent =
+    `${match.p3?.name || '?'} + ${match.p4?.name || '?'}`;
+
+  // Reset inputs
+  ['res_s1t1','res_s1t2','res_s2t1','res_s2t2','res_s3t1','res_s3t2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('res_set3row').style.display    = 'none';
+  document.getElementById('resultWinnerPreview').style.display = 'none';
+  document.getElementById('resultWinnerPreview').textContent   = '';
+  document.getElementById('resultModalMsg').style.display = 'none';
+
+  const btn = document.getElementById('resultSubmitBtn');
+  btn.disabled = false;
+  btn.textContent = '✅ Guardar resultado';
+
+  document.getElementById('resultModal').style.display = 'flex';
+}
+
+function closeResultModal(e) {
+  // If called from overlay click, only close when clicking the overlay itself
+  if (e && e.target !== document.getElementById('resultModal')) return;
+  document.getElementById('resultModal').style.display = 'none';
+  currentResultMatchId = null;
+}
+
+function closeResultModalDirect() {
+  document.getElementById('resultModal').style.display = 'none';
+  currentResultMatchId = null;
+}
+
+function onScoreInput() {
+  const s1t1 = parseInt(document.getElementById('res_s1t1').value);
+  const s1t2 = parseInt(document.getElementById('res_s1t2').value);
+  const s2t1 = parseInt(document.getElementById('res_s2t1').value);
+  const s2t2 = parseInt(document.getElementById('res_s2t2').value);
+
+  const set1ok = !isNaN(s1t1) && !isNaN(s1t2) && s1t1 !== s1t2;
+  const set2ok = !isNaN(s2t1) && !isNaN(s2t2) && s2t1 !== s2t2;
+
+  const winnerEl = document.getElementById('resultWinnerPreview');
+  winnerEl.style.display = 'none';
+
+  if (set1ok && set2ok) {
+    const w1 = s1t1 > s1t2 ? 1 : 2;
+    const w2 = s2t1 > s2t2 ? 1 : 2;
+
+    if (w1 === w2) {
+      // Winner determined after 2 sets
+      document.getElementById('res_set3row').style.display = 'none';
+      showWinnerPreview(w1);
+    } else {
+      // Split — need set 3
+      document.getElementById('res_set3row').style.display = 'grid';
+    }
+  }
+
+  // Check set 3
+  const s3t1 = parseInt(document.getElementById('res_s3t1').value);
+  const s3t2 = parseInt(document.getElementById('res_s3t2').value);
+  if (!isNaN(s3t1) && !isNaN(s3t2) && s3t1 !== s3t2) {
+    showWinnerPreview(s3t1 > s3t2 ? 1 : 2);
+  }
+}
+
+function showWinnerPreview(team) {
+  const match = loadedMatches.find(m => m.id === currentResultMatchId);
+  if (!match) return;
+  const name = team === 1
+    ? `${match.p1?.name} / ${match.p2?.name}`
+    : `${match.p3?.name} / ${match.p4?.name}`;
+  const el = document.getElementById('resultWinnerPreview');
+  el.textContent = `🏆 Ganador: ${name}`;
+  el.style.display = 'block';
+}
+
+async function submitResult() {
+  if (!currentResultMatchId) return;
+
+  const s1t1 = parseInt(document.getElementById('res_s1t1').value);
+  const s1t2 = parseInt(document.getElementById('res_s1t2').value);
+  const s2t1 = parseInt(document.getElementById('res_s2t1').value);
+  const s2t2 = parseInt(document.getElementById('res_s2t2').value);
+  const s3t1 = parseInt(document.getElementById('res_s3t1').value);
+  const s3t2 = parseInt(document.getElementById('res_s3t2').value);
+
+  // Validaciones
+  if (isNaN(s1t1) || isNaN(s1t2)) {
+    showModalMsg('❌ Introduce el marcador del set 1.', 'error'); return;
+  }
+  if (s1t1 === s1t2) {
+    showModalMsg('❌ El set 1 no puede empatar.', 'error'); return;
+  }
+  if (isNaN(s2t1) || isNaN(s2t2)) {
+    showModalMsg('❌ Introduce el marcador del set 2.', 'error'); return;
+  }
+  if (s2t1 === s2t2) {
+    showModalMsg('❌ El set 2 no puede empatar.', 'error'); return;
+  }
+
+  const w1 = s1t1 > s1t2 ? 1 : 2;
+  const w2 = s2t1 > s2t2 ? 1 : 2;
+  let winner_team;
+
+  if (w1 === w2) {
+    winner_team = w1;
+  } else {
+    // Necesita set 3
+    if (isNaN(s3t1) || isNaN(s3t2)) {
+      showModalMsg('❌ Introduce el marcador del set 3 (sets empatados a 1).', 'error'); return;
+    }
+    if (s3t1 === s3t2) {
+      showModalMsg('❌ El set 3 no puede empatar.', 'error'); return;
+    }
+    winner_team = s3t1 > s3t2 ? 1 : 2;
+  }
+
+  const btn = document.getElementById('resultSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Guardando…';
+
+  const payload = {
+    match_id:     currentResultMatchId,
+    set1_team1:   s1t1,
+    set1_team2:   s1t2,
+    set2_team1:   s2t1,
+    set2_team2:   s2t2,
+    winner_team,
+    submitted_by: currentPlayer.id,
+    status:       'pending',
+  };
+  if (!isNaN(s3t1) && !isNaN(s3t2)) {
+    payload.set3_team1 = s3t1;
+    payload.set3_team2 = s3t2;
+  }
+
+  const { error } = await _supabase.from('match_results').insert(payload);
+
+  if (error) {
+    showModalMsg('❌ Error: ' + error.message, 'error');
+    btn.disabled = false;
+    btn.textContent = '✅ Guardar resultado';
+    return;
+  }
+
+  closeResultModalDirect();
+  loadMyMatches();
+}
+
+async function confirmResult(resultId) {
+  const { error } = await _supabase
+    .from('match_results')
+    .update({
+      status:       'confirmed',
+      confirmed_by: currentPlayer.id,
+      confirmed_at: new Date().toISOString()
+    })
+    .eq('id', resultId);
+
+  if (error) { alert('Error al confirmar: ' + error.message); return; }
+  loadMyMatches();
+}
+
+function showModalMsg(text, type) {
+  const el = document.getElementById('resultModalMsg');
+  el.textContent = text;
+  el.className   = 'mc-msg mc-msg-' + type;
+  el.style.display = 'block';
+}
+
+// ── Referral code copy ─────────────────────────────────────────
+function copyReferralCode() {
+  const code = document.getElementById('referralCode').textContent;
+  const btn  = document.getElementById('referralCopyBtn');
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+  });
+}
+
+// ── Utilities ──────────────────────────────────────────────────
 function showSection(name) {
   ['login','profile','main'].forEach(s => {
     const el = document.getElementById(s + 'Section');
